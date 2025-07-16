@@ -192,7 +192,7 @@ export const ActionListaProdutosPromocao = ({
             width="40px"
             height="40px"
             size="small"
-            
+             disabledBTN={row.STATIVO === 'INATIVO'}
           />
         );
       },
@@ -254,6 +254,7 @@ export const ActionListaProdutosPromocao = ({
             onClickButton={() => handleDesativarOrigem(row)}
             width="40px"
             height="40px"
+            disabledBTN={row.STATIVO === 'INATIVO'}
           />
         );
       },
