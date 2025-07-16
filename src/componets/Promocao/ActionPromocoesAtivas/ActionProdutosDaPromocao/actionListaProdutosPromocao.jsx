@@ -577,7 +577,7 @@ export const ActionListaProdutosPromocao = ({
                 : item
             )
           );
-          return responsePost;
+          return response.data;
         } catch (error) {
           // let textoFuncao ='PROMOÇÃO/ERRO AO ATIVAR PRODUTO PROMOÇÃO DESTINO';
 
