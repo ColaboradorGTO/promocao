@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState, Suspense, lazy } from "react"
 
-const ActionPesquisaPromocao = lazy(() => import("../componets/Promocao/ActionPromocao/actionPesquisaPromocao").then(module => ({ default: module.ActionPesquisaPromocao })));
+const ActionPesquisaPromocoesAtivas = lazy(() => import("../componets/Promocao/ActionPromocoesAtivas/actionPesquisaPromocoesAtivas").then(module => ({ default: module.ActionPesquisaPromocoesAtivas })));
 
 
 export const DashBoardPromocao = ({ }) => {
@@ -19,8 +19,8 @@ export const DashBoardPromocao = ({ }) => {
   let component = null;
 
   switch (componentToShow) {
-    case "/promocoes/ActionPesquisaPromocao":
-      component = <ActionPesquisaPromocao  />;
+    case "/promocoes/ActionPesquisaPromocoesAtivas":
+      component = <ActionPesquisaPromocoesAtivas  />;
       break;
     default:
       component = null;
@@ -45,7 +45,7 @@ export const DashBoardPromocao = ({ }) => {
                       <div className="panel-content">
                         <Suspense fallback={<div>Loading...</div>}>
                           {actionVisivel && !resumoVisivel && !componentToShow && (
-                            <ActionPesquisaPromocao/>
+                            <ActionPesquisaPromocoesAtivas/>
 
                           )}
 

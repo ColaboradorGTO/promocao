@@ -15,7 +15,7 @@ import { ActionEditarPromocaoAtiva } from "./actionEditarPromocaoAtiva";
 import { ButtonTable } from "../../ButtonsTabela/ButtonTable";
 import { CiEdit } from "react-icons/ci";
 import { formatMoeda } from "../../../utils/formatMoeda";
-import { dataFormatada } from "../../../utils/dataFormatada";
+import { dataFormatada, dataHoraFormatada } from "../../../utils/dataFormatada";
 import { useRef } from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -26,7 +26,7 @@ import * as XLSX from 'xlsx';
 import HeaderTable from "../../Tables/headerTable";
 
 
-export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
+export const ActionPesquisaPromocoesAtivas = ({}) => {
   const [tabelaCampanha, setTabelaCampanha] = useState(true);
   const [actionPromocaoAtiva, setActionPromocaoAtiva] = useState(true);
   const [actionCadastrarPromocao, setActionCadastrarPromocao] = useState(false);
@@ -98,14 +98,6 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
   }, [])
 
 
-  const { data: optionsModulos = [], error: errorModulos, isLoading: isLoadingModulos, refetch: refetchModulos } = useQuery(
-    'menus-usuario-excecao',
-    async () => {
-      const response = await get(`/menus-usuario-excecao?idUsuario=${usuarioLogado?.id}&idMenuFilho=${ID}`);
-      return response.data;
-    },
-    { enabled: Boolean(usuarioLogado?.id), staleTime: 60 * 60 * 1000,}
-  );
 
   const fetchListaProdutosPromocao = async () => {
     try {
