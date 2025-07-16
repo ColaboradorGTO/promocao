@@ -267,6 +267,7 @@ export const ActionMainPromocao = ({
                           styles={styleMecanica}
 
                         />
+                        
 
                       )}
 

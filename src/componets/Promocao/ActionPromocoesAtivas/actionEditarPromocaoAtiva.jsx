@@ -323,7 +323,7 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
       setFileProdutoOrigem([]); 
     }
   }, [novoProdutoOrigem, setProdutoOrigem, setFileProdutoOrigem]);
-
+  console.log(valorSelecionado, 'valorSelecionado')
 
   return (
     <Fragment>

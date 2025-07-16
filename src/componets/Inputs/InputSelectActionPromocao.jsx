@@ -43,6 +43,7 @@ export const InputSelectActionPromocao = ({
             className="basic-multi-select"
             classNamePrefix="select"
             defaultValue={defaultValue}
+            value={value}
             isDisabled={isDisabled}
             isLoading={isLoading}
             isClearable={isClearable}
