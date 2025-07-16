@@ -9,10 +9,13 @@ import { IoIosSend } from "react-icons/io";
 import { ButtonTypeModal } from "../../Buttons/ButtonTypeModal";
 import { useUpdatePromocaoAtiva } from "./hook/useUpdatePromocao";
 import { dataFormatada } from "../../../utils/dataFormatada";
-import { ActionProdutoModal } from "./ActionProdutos/actionProdutoModal";
+import { ActionProdutoDestinoModal } from "./ActionProdutosDestino/actionProdutoDestinoModal";
+import { ActionProdutoOrigemModal } from "./ActionProdutosOrigem/actionProdutoOrigemModal";
 import { AiFillBackward } from "react-icons/ai";
 import { FaRegFileExcel } from "react-icons/fa";
 import { ActionDocumentacaoAtualizar } from "./ActionDocumentacao/documentacaoAtualizar";
+import { ActionProdutoModalPromocao } from "./ActionProdutosDaPromocao/actionProdutoModalPromocao";
+import { use } from "react";
 
 
 
@@ -68,6 +71,10 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
     setPrecoProduto,
     statusSelecionado,
     setStatusSelecionado,
+    statusProdutoDestino,
+    setStatusProdutoDestino,
+    statusProdutoOrigem,
+    setStatusProdutoOrigem,
     dadosFornecedorProduto,
     dadosGrupo,
     optionsMarcas,
@@ -89,11 +96,27 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
     mostrarProdutosPromocao,
     handlePesquisarProdutoDestino,
     handlePesquisarProdutoOrigem,
-    modalProduto,
-    setModalProduto,
+    modalProdutoDestino,
+    setModalProdutoDestino,
+    modalProdutoOrigem,
+    setModalProdutoOrigem,
+    modalProdutoDaPromocao,
+    setModalProdutoDaPromocao,
     dadosProdutosPesquisa,
     modalDocumentacao,
     setModalDocumentacao,
+    mostrarProdutosPromocaoAtiva,
+    dadosProdutosPromocaoDaPromocao,
+    setDadosProdutosPromocaoDaPromocao,
+    produtoDestinoSelecionado,
+    setProdutoDestinoSelecionado, 
+    produtoOrigemSelecionado,
+    setProdutoOrigemSelecionado,
+    novoProdutoDestino,
+    setNovoProdutoDestino,
+    novoProdutoOrigem,
+    setNovoProdutoOrigem,
+    refetchProdutosPromocoes
   } = useUpdatePromocaoAtiva({ dadosPromocao });
 
   const customStyles = {
@@ -107,10 +130,10 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
     }),
   };
 
-  const handleEmpresaChange = useCallback((selectedOptions) => {
-    const values = selectedOptions.map((option) => option.value);
-    setEmpresaSelecionada(values);
-  }, [setEmpresaSelecionada]);
+  // const handleEmpresaChange = useCallback((selectedOptions) => {
+  //   const values = selectedOptions.map((option) => option.value);
+  //   setEmpresaSelecionada(values);
+  // }, [setEmpresaSelecionada]);
 
 
   const handleChangeMecanica = useCallback((selectedValue) => {
@@ -123,34 +146,37 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
       setMecanicaSelecionadaEdicao(selectedOption.DESCRICAO)
       setAplicacaoDestinoSelecionada(selectedOption.APLICAODESTINO);
       setTipoDescontoSelecionado(selectedOption.TIPODESCONTO);
+
+      
     } else {
       console.log('Nenhuma opção encontrada para o valor:', selectedValue);
     }
   }, [mecanicaSelecionada, mecanicaSelecionadaEdicao, setMecanicaSelecionada, setAplicacaoDestinoSelecionada, setTipoDescontoSelecionado,]);
 
-  const handleEditarMecanica = () => {
-    setMecanicaSelecionadaEdicao(mecanicaSelecionada);
-  };
+
 
 
   useEffect(() => {
     if (tipoDescontoSelecionado == 0) {
+    setVrDesconto(0);
+    setValorInicio(0);
+    if(!dadosPromocao[0]?.FATORPROMOVLR) {
       setVrDesconto(0);
-      setValorInicio(0);
-      setPorcentoDesconto(0)
-    } else if (tipoDescontoSelecionado == 1) {
-      setPorcentoDesconto(0)
-      setPrecoProduto(0);
-      setValorInicio(0);
-    } else if (tipoDescontoSelecionado == 2) {
-      setVrDesconto(0);
-      setPrecoProduto(0);
-      setValorInicio(0);
     }
-
-    if (mecanicaSelecionada == 1) {
-      setQtdInicio(0);
+    if (!dadosPromocao[0]?.FATORPROMOPERC) {
+      setPorcentoDesconto(0);
     }
+  } else if (tipoDescontoSelecionado == 1) {
+    if (!dadosPromocao[0]?.FATORPROMOPERC) {
+      setPorcentoDesconto(0);
+    }
+    setPrecoProduto(0);
+    setValorInicio(0);
+  } else if (tipoDescontoSelecionado == 2) {
+    setVrDesconto(0);
+    setPrecoProduto(0);
+    setValorInicio(0);
+  }
 
   }, [mecanicaSelecionada, tipoDescontoSelecionado, setPrecoProduto, setVrDesconto, setValorInicio, setPorcentoDesconto]);
 
@@ -196,6 +222,30 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
     return null;
   }, [mecanicaInicial, dadosMecanicas, optionsMecanica]);
 
+  const valorSelecionado = useMemo(() => {
+    if (mecanicaSelecionada && dadosMecanicas.length > 0) {
+      const mecanica = dadosMecanicas.find(item => item.ID === mecanicaSelecionada);
+      return mecanica ? {
+        value: mecanica.ID,
+        label: mecanica.DESCRICAO,
+        APLICAODESTINO: mecanica.APLICACAODESTINO,
+        TIPODESCONTO: mecanica.TIPODESCONTO
+      } : null;
+    }
+    return null;
+  }, [mecanicaSelecionada, dadosMecanicas]);
+
+  useEffect(() => {
+    if (mecanicaCorrespondente) {
+      setMecanicaSelecionada(mecanicaCorrespondente.ID);
+      setMecanicaSelecionadaEdicao(mecanicaCorrespondente.DESCRICAO);
+      setAplicacaoDestinoSelecionada(mecanicaCorrespondente.APLICACAODESTINO);
+      setTipoDescontoSelecionado(mecanicaCorrespondente.TIPODESCONTO);
+    }
+
+  }, [mecanicaCorrespondente]);
+  
+  
   const handlePorcentoDesconto = (value) => {
     if (isNaN(value) || value == "" || typeof value !== "number") {
       setPorcentoDesconto(0);
@@ -212,19 +262,6 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
     }
 
   }
-
-  const valorSelecionado = useMemo(() => {
-    if (mecanicaSelecionada && dadosMecanicas.length > 0) {
-      const mecanica = dadosMecanicas.find(item => item.ID === mecanicaSelecionada);
-      return mecanica ? {
-        value: mecanica.ID,
-        label: mecanica.DESCRICAO,
-        APLICAODESTINO: mecanica.APLICAODESTINO,
-        TIPODESCONTO: mecanica.TIPODESCONTO
-      } : null;
-    }
-    return null;
-  }, [mecanicaSelecionada, dadosMecanicas]);
 
 
   const empresasFiltradas = useMemo(() => {
@@ -266,18 +303,27 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
     }
   }, [optionsEmpresasPromocoes, empresasSelecionadas, setEmpresasSelecionadas]);
 
-  const downloadCSV = useCallback(() => {
-    const url = "/documentacao.xlsx";
-    const link = document.createElement("a");
-    link.href = url;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }, []);
 
   const mostrarDocumentacao = useCallback(() => {
     setModalDocumentacao(true);
   }, []);
+
+  useEffect(() => {
+    
+    if (novoProdutoDestino && novoProdutoDestino.length > 0) {
+      setProdutoDestino(novoProdutoDestino[novoProdutoDestino.length - 1]); 
+      setFileProdutoDestino([]); 
+    }
+  }, [novoProdutoDestino, setProdutoDestino, setFileProdutoDestino]);
+
+  useEffect(() => {
+
+    if (novoProdutoOrigem && novoProdutoOrigem.length > 0) {
+      setProdutoOrigem(novoProdutoOrigem[novoProdutoOrigem.length - 1]); 
+      setFileProdutoOrigem([]); 
+    }
+  }, [novoProdutoOrigem, setProdutoOrigem, setFileProdutoOrigem]);
+
 
   return (
     <Fragment>
@@ -290,16 +336,15 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
         InputSelectMecanicaComponent={InputSelectActionPromocao}
         labelSelectMecanica={"Mecanica"}
         optionsMecanica={dadosMecanicas.map((item) => ({
-          value: item.ID,
-          label: item.DESCRICAO,
-          APLICAODESTINO: item.APLICAODESTINO,
-          TIPODESCONTO: item.TIPODESCONTO
+            value: item.ID,
+            label: item.DESCRICAO,
+            APLICACAODESTINO: item.APLICACAODESTINO,
+            TIPODESCONTO: item.TIPODESCONTO
         }))}
-        valueSelectMecanica={mecanicaSelecionada}
         onChangeSelectMecanica={(e) => handleChangeMecanica(e.value)}
         styleMecanica={customStyles}
         defaultValueSelectMecanica={valorSelecionado}
-
+        valueSelectMecanica={valorSelecionado}
 
         InputFieldQTDInicioComponent={InputFieldAction}
         labelInputQTDInicio={"QTD Aparti de"}
@@ -364,7 +409,6 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
             }))
             : [])
         ]}
-        valueSelectMarca={marcaSelecionada}
         onChangeSelectMarcas={(e) => {
           if (e.value === "all") {
             const allValues = optionsMarcas?.map((marca) => marca.IDGRUPOEMPRESARIAL);
@@ -373,11 +417,13 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
             setMarcaSelecionada(e.value);
           }
         }}
+        defaultValueSelectMarca={marcaSelecionada}
+        // valueSelectMarca={marcaSelecionada}
 
         InputSelectStatus={InputSelectActionPromocao}
         labelSelectStatus={"Status"}
         optionsStatus={optionsStatus}
-        valueSelectStatus={statusSelecionado}
+        // valueSelectStatus={statusSelecionado}
         onChangeSelectStatus={(e) => setStatusSelecionado(e.value)}
         defaultValueSelectStatus={optionsStatus.find(option => option.value == "True") ? { value: "True", label: "ATIVO" } : { value: "False", label: "INATIVO" }}
 
@@ -418,7 +464,7 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
         InputFieldProdutoOigem={InputFieldAction}
         labelInputFieldProdutoOigem={"Produto Origem"}
         valueInputFieldProdutoOigem={produtoOrigem}
-        onChangeInputFieldProdutoOigem={(e) => setProdutoOrigem(e.target.value)}
+        onChangeInputFieldProdutoOigem={(e) => setProdutoOrigem(e.target.value) }
         readOnlyProdutoOigem={fileProdutoOrigem.length > 0 ? true : false}
 
         ButtonTypeProdutoPesquisadoOrigem={ButtonType}
@@ -454,6 +500,10 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
         labelInputFieldProdutoDestino={"Produto Destino"}
         valueInputFieldProdutoDestino={produtoDestino}
         onChangeInputFieldProdutoDestino={(e) => setProdutoDestino(e.target.value)}
+        // onChangeInputFieldProdutoDestino={(e) => {
+        //   const value = e.target.value;
+        //   setProdutoDestino(value ? [value] : []);
+        // }}
         readOnlyProdutoDestino={fileProdutoDestino.length > 0 ? true : false}
 
         ButtonTypeProdutoPesquisadoDestino={ButtonType}
@@ -484,15 +534,15 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
         IconCadastro={GrView}
 
         ButtonSearchComponent={ButtonType}
-        linkNomeSearch={"Atualizar Promoção"}
+        linkNomeSearch={"Atualizar Promoção Ativa"}
         onButtonClickSearch={handleCadastrar}
         corSearch={"primary"}
         IconSearch={IoIosSend}
 
         ButtonTypeVisualizarProduto={ButtonType}
-        linkNomeVisualizarProduto={"Visualizar Produtos da Promoção"}
+        linkNomeVisualizarProduto={"Visualizar Produtos da Promoção Ativa"}
         onButtonClickVisualizarProduto={() => {
-          mostrarProdutosPromocao();
+          mostrarProdutosPromocaoAtiva();
         }}
         corVisualizarProduto={"info"}
         IconVisualizarProduto={GrView}
@@ -510,16 +560,43 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
         IconTXT={GrFormView}
       />
 
-      <ActionProdutoModal
-        show={modalProduto}
-        handleClose={() => setModalProduto(false)}
+      <ActionProdutoDestinoModal
+        show={modalProdutoDestino}
+        handleClose={() => setModalProdutoDestino(false)}
         dadosProdutosPesquisa={dadosProdutosPesquisa}
+        novoProdutoDestino={novoProdutoDestino}
+        setNovoProdutoDestino={setNovoProdutoDestino}
+        statusProdutoDestino={statusProdutoDestino}
+        setStatusProdutoDestino={setStatusProdutoDestino}
+
+      />
+
+      <ActionProdutoOrigemModal
+        show={modalProdutoOrigem}
+        handleClose={() => setModalProdutoOrigem(false)}
+        dadosProdutosPesquisa={dadosProdutosPesquisa}
+        novoProdutoOrigem={novoProdutoOrigem}
+        setNovoProdutoOrigem={setNovoProdutoOrigem}
+        statusProdutoOrigem={statusProdutoOrigem}
+        setStatusProdutoOrigem={setStatusProdutoOrigem}
       />
 
       <ActionDocumentacaoAtualizar 
         show={modalDocumentacao}
         handleClose={() => setModalDocumentacao(false)}
       />
+
+      <ActionProdutoModalPromocao 
+        show={modalProdutoDaPromocao}
+        handleClose={() => setModalProdutoDaPromocao(false)}
+        dadosProdutosPromocaoDaPromocao={dadosProdutosPromocaoDaPromocao}
+        produtoDestinoSelecionado={produtoDestinoSelecionado}
+        setProdutoDestinoSelecionado={setProdutoDestinoSelecionado} 
+        produtoOrigemSelecionado={produtoOrigemSelecionado}
+        setProdutoOrigemSelecionado={setProdutoOrigemSelecionado}
+        refetchProdutosPromocoes={refetchProdutosPromocoes}
+      /> 
+
     </Fragment>
   )
 }

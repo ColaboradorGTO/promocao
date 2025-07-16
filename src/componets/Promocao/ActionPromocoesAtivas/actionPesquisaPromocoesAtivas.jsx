@@ -26,7 +26,7 @@ import * as XLSX from 'xlsx';
 import HeaderTable from "../../Tables/headerTable";
 
 
-export const ActionPesquisaPromocoesAtivas = ({}) => {
+export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
   const [tabelaCampanha, setTabelaCampanha] = useState(true);
   const [actionPromocaoAtiva, setActionPromocaoAtiva] = useState(true);
   const [actionCadastrarPromocao, setActionCadastrarPromocao] = useState(false);
@@ -98,6 +98,14 @@ export const ActionPesquisaPromocoesAtivas = ({}) => {
   }, [])
 
 
+  const { data: optionsModulos = [], error: errorModulos, isLoading: isLoadingModulos, refetch: refetchModulos } = useQuery(
+    'menus-usuario-excecao',
+    async () => {
+      const response = await get(`/menus-usuario-excecao?idUsuario=${usuarioLogado?.id}&idMenuFilho=${ID}`);
+      return response.data;
+    },
+    { enabled: Boolean(usuarioLogado?.id), staleTime: 60 * 60 * 1000,}
+  );
 
   const fetchListaProdutosPromocao = async () => {
     try {
@@ -247,20 +255,20 @@ export const ActionPesquisaPromocoesAtivas = ({}) => {
     ]
   
   
-    const handleEdit = async (row) => {
-      try {
-        const response = await get(`/promocoes-ativas?idResumoPromocao=${row.IDRESUMOPROMOCAOMARKETING}`);
-        if (response.data && response.data.length > 0) {
-          setDadosPromocao(response.data);
-          setModalVisivel(true);
-          setActionPromocaoAtiva(false);
-        }
-        return response.data;
-      } catch (error) {
-        console.error('Erro ao buscar detalhes da venda: ', error);
+  const handleEdit = async (row) => {
+    try {
+      const response = await get(`/promocoes-ativas?idResumoPromocao=${row.IDRESUMOPROMOCAOMARKETING}`);
+      if (response.data && response.data.length > 0) {
+        setDadosPromocao(response.data);
+        setModalVisivel(true);
+        setActionPromocaoAtiva(false);
       }
-  
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar detalhes da venda: ', error);
     }
+
+  }
 
   const handleClickIncluir = () => {
     setActionPromocaoAtiva(true)

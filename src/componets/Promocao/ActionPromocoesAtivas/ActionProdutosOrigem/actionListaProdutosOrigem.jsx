@@ -1,17 +1,34 @@
-import React, { Fragment, useRef, useState } from "react"
+import React, { Fragment, useEffect, useRef, useState } from "react"
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useReactToPrint } from "react-to-print";
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
-import HeaderTable from "../../Tables/headerTable";
+import HeaderTable from "../../../Tables/headerTable";
+import { post, put } from "../../../../api/funcRequest";
+import Swal from "sweetalert2";
 
 
-export const ActionListaPromocoesAtivas = ({ dadosProdutosPesquisa}) => {
+export const ActionListaProdutosOrigem = ({
+  dadosProdutosPesquisa,
+  novoProdutoOrigem,
+  setNovoProdutoOrigem,
+  statusProdutoOrigem,
+  setStatusProdutoOrigem,
+}) => {
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const dataTableRef = useRef();
 
+  
+  const handleCheckboxChangeOrigem = (id) => {
+    const stringId = String(id);
+    setNovoProdutoOrigem(prevState =>
+      prevState.includes(stringId)
+        ? prevState.filter(item => item !== stringId)
+        : [...prevState, stringId]
+    );
+  }
 
   const onGlobalFilterChange = (e) => {
     setGlobalFilterValue(e.target.value);
@@ -45,7 +62,7 @@ export const ActionListaPromocoesAtivas = ({ dadosProdutosPesquisa}) => {
       { wpx: 100, caption: 'N.Itens' },
       { wpx: 200, caption: 'Código de Barras' },
       { wpx: 200, caption: 'Descrição' },
-     
+
     ];
     XLSX.utils.sheet_add_aoa(worksheet, [header], { origin: 'A1' });
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Produtos Promoções Ativas');
@@ -56,15 +73,24 @@ export const ActionListaPromocoesAtivas = ({ dadosProdutosPesquisa}) => {
 
   const dados = dadosProdutosPesquisa.map((item, index) => {
     let contador = index + 1;
+   
     return {
       contador,
       IDPRODUTO: item.IDPRODUTO,
       NUCODBARRAS: item.NUCODBARRAS,
       DSNOME: item.DSNOME,
+      IDRESUMOPROMOCAOMARKETING: item.IDRESUMOPROMOCAOMARKETING,
+      STATIVO: item.STATIVO,
     }
   });
 
   const colunasProdutos = [
+    {
+      field: 'contador',
+      header: '#',
+      body: row => <th>{row.contador}</th>,
+      sortable: true,
+    },
     {
       field: 'DPRODUTO',
       header: 'N.Item',
@@ -83,6 +109,24 @@ export const ActionListaPromocoesAtivas = ({ dadosProdutosPesquisa}) => {
       body: row => <th>{row.NUCODBARRAS}</th>,
       sortable: true,
     },
+    {
+      field: '',
+      header: 'Opções',
+      body: row => {
+        return (
+          <input
+            type="checkbox"
+            checked={novoProdutoOrigem?.includes(row.IDPRODUTO)}
+            onChange={() =>
+              handleCheckboxChangeOrigem(
+                row.IDPRODUTO,
+              )
+            }
+          />
+        );
+      },
+      sortable: false,
+    }
   ]
 
 

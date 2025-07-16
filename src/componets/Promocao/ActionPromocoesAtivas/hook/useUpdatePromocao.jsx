@@ -7,7 +7,7 @@ import * as XLSX from 'xlsx';
 import { optionsMecanica } from "../../../../../mecanica"
 import { useNavigate } from "react-router-dom"
 import axios from "axios";
-
+import { toFloat } from "../../../../utils/toFloat"
 
 export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
   const [mecanicaSelecionada, setMecanicaSelecionada] = useState(0)
@@ -44,10 +44,19 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
   const [idResumoPromocao, setIdResumoPromocao] = useState('');
   const [idEmpresa, setIdEmpresa] = useState('');
   const [statusSelecionado, setStatusSelecionado] = useState('');
+  const [statusProdutoOrigem, setStatusProdutoOrigem] = useState([]);
+  const [statusProdutoDestino, setStatusProdutoDestino] = useState([]);
   const [dadosProdutosPesquisa, setDadosProdutosPesquisa] = useState([]);
-  const [modalProduto, setModalProduto] = useState(false);
+  const [modalProdutoDestino, setModalProdutoDestino] = useState(false);
+  const [modalProdutoOrigem, setModalProdutoOrigem] = useState(false);
+  const [modalProdutoDaPromocao, setModalProdutoDaPromocao] = useState(false);
   const [empresasSelecionadas, setEmpresasSelecionadas] = useState([]);
   const [modalDocumentacao, setModalDocumentacao] = useState(false);
+  const [dadosProdutosPromocaoDaPromocao, setDadosProdutosPromocaoDaPromocao] = useState([]);
+  const [produtoDestinoSelecionado, setProdutoDestinoSelecionado] = useState([]);
+  const [produtoOrigemSelecionado, setProdutoOrigemSelecionado] = useState([]);
+  const [novoProdutoDestino, setNovoProdutoDestino] = useState([]);
+  const [novoProdutoOrigem, setNovoProdutoOrigem] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -87,7 +96,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
 
 
   const { data: dadosMecanicas = [], error: errorMecanicas, isLoading: isLoadingMecanica, refetch: refetchMecanica } = useQuery(
-    'fornecedor-produto',
+    'mecanicas-ativas',
     async () => {
       const response = await get(`/mecanicas-ativas`);
       return response.data;
@@ -137,13 +146,13 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
 
 
   useEffect(() => {
-   
+   if(dadosPromocao) {
     setQtdInicio(dadosPromocao[0]?.APARTIRDEQTD)
     setValorInicio(dadosPromocao[0]?.APARTIRDOVLR)
     setVrDesconto(dadosPromocao[0]?.FATORPROMOVLR)
    
     setPrecoProduto(dadosPromocao[0]?.VLPRECOPRODUTO)
-    setPorcentoDesconto(dadosPromocao[0]?.FATORPROMOPERC)
+    // setPorcentoDesconto(toFloat(dadosPromocao[0]?.FATORPROMOPERC))
     setMecanicaSelecionadaEdicao(dadosPromocao[0]?.DSPROMOCAOMARKETING)
     setMecanicaSelecionada(dadosPromocao[0]?.DSPROMOCAOMARKETING)
     setDescricao(dadosPromocao[0]?.DSPROMOCAOMARKETING)
@@ -154,7 +163,14 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     const statusValue = dadosPromocao[0]?.STATIVO == "True" ?  "True" : "False"; 
     
     setStatusSelecionado(statusValue);
+   }
    
+    if (dadosPromocao && dadosPromocao[0]?.FATORPROMOPERC !== undefined) {
+      const valor = parseFloat(dadosPromocao[0].FATORPROMOPERC);
+      if (!isNaN(valor)) {
+        setPorcentoDesconto(valor);
+      }
+    }
   }, [dadosPromocao, setQtdInicio, setValorInicio, setVrDesconto, setPrecoProduto, setPorcentoDesconto, setMecanicaSelecionadaEdicao, setDescricao, setDataInicio, setDataFim, setStatusSelecionado]);
 
   const optionsStatus = useMemo(() => [
@@ -356,6 +372,19 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     });
   })
 
+  const mostrarProdutosPromocaoAtiva = async () => {
+   
+    try {
+      const response = await get(`/detalhe-promocoes-ativas?idResumoPromocao=${idResumoPromocao}`)
+      if (response.data) {
+        setDadosProdutosPromocaoDaPromocao(response?.data);
+        setModalProdutoDaPromocao(true)
+      }
+    } catch (error) {
+      console.log(error, "não foi possivel pegar os dados da tabela ")
+    }
+  }
+
   const handlePesquisarProdutoOrigem = useCallback(async (tipo) => {
     const produtosOrigem = fileProdutoOrigem && fileProdutoOrigem.length > 0 ? JSON.parse(fileProdutoOrigem) : produtoOrigem ? [produtoOrigem] : [];
     const produtoOrigemArray = Array.isArray(produtosOrigem) ? produtosOrigem : [produtosOrigem];
@@ -371,7 +400,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     } else {
       setDadosProdutosPesquisa([]);
     }
-    setModalProduto(true);
+    setModalProdutoOrigem(true);
   }, [fileProdutoOrigem, produtoOrigem]);
 
   const handlePesquisarProdutoDestino = useCallback(async (tipo) => {
@@ -389,7 +418,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     } else {
       setDadosProdutosPesquisa([]);
     }
-    setModalProduto(true);
+    setModalProdutoDestino(true);
   }, [fileProdutoOrigem, fileProdutoDestino, produtoOrigem, produtoDestino]);
 
   
@@ -437,7 +466,12 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     [empresasSelecionadas]
   );
 
- 
+      //  {console.log(produtosDestino, 'produtosDestino')};
+      // {console.log(produtosOrigem, 'produtosOrigem')};
+      // {console.log(produtoDestinoSelecionado, 'produtoDestinoSelecionado')};
+      // {console.log(produtoOrigemSelecionado, 'produtoOrigemSelecionado')};
+      // {console.log(novoProdutoDestino, 'novoProdutoDestino')};
+      // {console.log(novoProdutoOrigem, 'novoProdutoOrigem')};
   const onSubmit = async (data) => {
     
     try {
@@ -673,6 +707,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
         }
       }
  
+
       const putData = {
         DSPROMOCAOMARKETING: descricao.toUpperCase(),
         DTHORAINICIO: dataInicio,
@@ -685,7 +720,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
         FATORPROMOPERC: Number(porcentoDesconto),
         TPAPARTIRDE: dadosPromocao[0]?.TPAPARTIRDE,
         VLPRECOPRODUTO: Number(precoProduto),
-        STEMPRESAPROMO: "True",
+        STEMPRESAPROMO: statusSelecionado,
         STDETPROMOORIGEM: "True",
         STDETPROMODESTINO: "True",
         IDMECANICARESUMOPROMOCAOMARKETING: dadosPromocao[0]?.IDMECANICARESUMOPROMOCAOMARKETING,
@@ -693,20 +728,33 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
 
         IDRESUMOPROMOCAOMARKETING: dadosPromocao[0]?.IDRESUMOPROMOCAOMARKETING,
 
-        IDPRODUTO: produtosDestino,
+        IDPRODUTO: [
+          ...(Array.isArray(produtosDestino) ? produtosDestino : produtosDestino ? [produtosDestino] : []),
+          ...(Array.isArray(produtoDestinoSelecionado) ? produtoDestinoSelecionado : produtoDestinoSelecionado ? [produtoDestinoSelecionado] : []),
+          ...(Array.isArray(novoProdutoDestino) ? novoProdutoDestino : novoProdutoDestino ? [novoProdutoDestino] : []),
+        ],
 
         IDEMPRESA: empresasSelecionadasValues,
         IDGRUPOEMDESTINO: grupoSelecionado,
         IDSUBGRUPOEMDESTINO: subGrupoSelecionado,
         IDMARCAEMDESTINO: marcaDestino,
         IDFORNECEDOREMDESTINO: fornecedorSelecionado,
-        IDPRODUTODESTINO: produtosDestino,
+        IDPRODUTODESTINO: [
+          ...(Array.isArray(produtosDestino) ? produtosDestino : produtosDestino ? [produtosDestino] : []),
+          ...(Array.isArray(produtoDestinoSelecionado) ? produtoDestinoSelecionado : produtoDestinoSelecionado ? [produtoDestinoSelecionado] : []),
+          ...(Array.isArray(novoProdutoDestino) ? novoProdutoDestino : novoProdutoDestino ? [novoProdutoDestino] : []),
+        ],
         IDGRUPOEMORIGEM: grupoSelecionado,
         IDSUBGRUPOEMORIGEM: subGrupoSelecionado,
         IDMARCAEMORIGEM: marcaOrigem,
         IDFORNECEDOREMORIGEM: fornecedorSelecionado,
 
-        IDPRODUTOORIGEM: produtosOrigem,
+        // Envia as três formas possíveis para IDPRODUTOORIGEM
+        IDPRODUTOORIGEM: [
+          ...(Array.isArray(produtosOrigem) ? produtosOrigem : produtosOrigem ? [produtosOrigem] : []),
+          ...(Array.isArray(produtoOrigemSelecionado) ? produtoOrigemSelecionado : produtoOrigemSelecionado ? [produtoOrigemSelecionado] : []),
+          ...(Array.isArray(novoProdutoOrigem) ? novoProdutoOrigem : novoProdutoOrigem ? [novoProdutoOrigem] : []),
+        ].filter(Boolean),
       };
 
       let timerInterval;
@@ -906,6 +954,10 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     setBtnSalvar,
     statusSelecionado,
     setStatusSelecionado,
+    statusProdutoDestino,
+    setStatusProdutoDestino,
+    statusProdutoOrigem,
+    setStatusProdutoOrigem,
     ipUsuario,
     usuarioLogado,
     optionsEmpresasPromocoes,
@@ -915,11 +967,27 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     mostrarProdutosPromocao,
     handlePesquisarProdutoDestino,
     handlePesquisarProdutoOrigem,
-    modalProduto,
-    setModalProduto,
+    modalProdutoDestino,
+    setModalProdutoDestino,
+    modalProdutoOrigem,
+    setModalProdutoOrigem,
+    modalProdutoDaPromocao,
+    setModalProdutoDaPromocao,
     dadosProdutosPesquisa,
     modalDocumentacao,
     setModalDocumentacao,
+    mostrarProdutosPromocaoAtiva,
+    dadosProdutosPromocaoDaPromocao,
+    setDadosProdutosPromocaoDaPromocao,
+    produtoDestinoSelecionado,
+    setProdutoDestinoSelecionado, 
+    produtoOrigemSelecionado,
+    setProdutoOrigemSelecionado,
+    novoProdutoDestino,
+    setNovoProdutoDestino,
+    novoProdutoOrigem,
+    setNovoProdutoOrigem,
+    refetchProdutosPromocoes,
     onSubmit
   }
 }
