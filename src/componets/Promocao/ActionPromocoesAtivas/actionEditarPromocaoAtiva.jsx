@@ -345,31 +345,36 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
         styleMecanica={customStyles}
         defaultValueSelectMecanica={valorSelecionado}
         valueSelectMecanica={valorSelecionado}
+        readOnlyMecanica={true}
 
         InputFieldQTDInicioComponent={InputFieldAction}
         labelInputQTDInicio={"QTD Aparti de"}
         valueInputFieldQTDInicio={qtdInicio}
         onChangeInputFieldQTDInicio={(e) => setQtdInicio(e.target.value)}
-        readOnlyQTDInicio={mecanicaSelecionada == 1 ? true : false}
+        readOnlyQTDInicio={true}
+        // readOnlyQTDInicio={mecanicaSelecionada == 1 ? true : false}
        
 
         InputFieldQTDFimComponent={InputFieldAction}
         labelInputQTDFim={"Vr Apartir de"}
         valueInputFieldQTDFim={valorInicio}
         onChangeInputFieldQTDFim={(e) => setValorInicio(Number(e.target.value))}
-        readOnlyQTDFim={mecanicaSelecionada == 1 ? false : true}
+        readOnlyQTDFim={true}
+        // readOnlyQTDFim={mecanicaSelecionada == 1 ? false : true}
 
         InputFieldDescontoComponent1={InputFieldAction}
         labelInputFieldDesconto1={"Vr Desconto "}
         valueInputFieldDesconto1={vrDesconto}
         onChangeInputFieldDesconto1={(e) => setVrDesconto(Number(e.target.value))}
-        readOnlyDesconto1={tipoDescontoSelecionado == 1 ? false : true}
+        readOnlyDesconto1={true}
+        // readOnlyDesconto1={tipoDescontoSelecionado == 1 ? false : true}
       
         InputFieldDescontoComponent2={InputFieldAction}
         labelInputFieldDesconto2={"Desconto %"}
         valueInputFieldDesconto2={porcentoDesconto}
         onChangeInputFieldDesconto2={(e) => handlePorcentoDesconto(Number(e.target.value))}
-        readOnlyDesconto2={tipoDescontoSelecionado == 2 ? false : true}
+        readOnlyDesconto2={true}
+        // readOnlyDesconto2={tipoDescontoSelecionado == 2 ? false : true}
       
         InputFieldVrInicio={InputFieldAction}
         labelInputFieldVrInicio={"Vr Desconto Final"}
@@ -378,25 +383,28 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
           const valor = e.target.value.replace(/,/g, '.');
           setPrecoProduto(valor);
         }}
-        readOnlyVrInicio={tipoDescontoSelecionado == 0 ? false : true}
+        readOnlyVrInicio={true}
+        // readOnlyVrInicio={tipoDescontoSelecionado == 0 ? false : true}
 
 
         InputFieldDTInicioComponent={InputFieldAction}
         labelInputDTInicio={"Data Inicio"}
         valueInputFieldDTInicio={dataInicio}
         onChangeInputFieldDTInicio={(e) => setDataInicio(e.target.value)}
+        readOnlyDTInicio={true}
 
         InputFieldDTFimComponent={InputFieldAction}
         labelInputDTFim={"Data Fim"}
         valueInputFieldDTFim={dataFim}
         onChangeInputFieldDTFim={(e) => setDataFim(e.target.value)}
+        readOnlyDTFim={true}
 
         InputFieldDescription={InputFieldAction}
         labelInputFieldDescription={"Descrição"}
         valueInputFielDescription={descricao}
         onChangeInputFieldDescription={(e) => setDescricao(e.target.value)}
         styleDescription={{ textTransform: "uppercase" }}
-
+        readOnlyDescription={true}
 
         InputSelectMarcasComponent={InputSelectActionPromocao}
         labelSelectMarcas={"Marca"}

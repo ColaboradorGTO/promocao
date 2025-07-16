@@ -265,7 +265,7 @@ export const ActionMainPromocao = ({
                           value={valueSelectMecanica}
                           defaultValue={defaultValueSelectMecanica}
                           styles={styleMecanica}
-
+                          isDisabled={readOnlyMecanica}
                         />
                         
 
