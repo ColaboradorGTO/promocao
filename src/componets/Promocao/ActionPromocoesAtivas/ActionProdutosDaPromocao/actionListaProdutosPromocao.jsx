@@ -54,37 +54,6 @@ export const ActionListaProdutosPromocao = ({
     }
   }, [dadosProdutosPromocaoDaPromocao]);
 
-  const [usuarioLogado, setUsuarioLogado] = useState(null);
-  const [ipUsuario, setIpUsuario] = useState('');
-  const navigate = useNavigate();
-
-
-  useEffect(() => {
-    const usuarioArmazenado = localStorage.getItem('usuario');
-
-    if (usuarioArmazenado) {
-      try {
-        const parsedUsuario = JSON.parse(usuarioArmazenado);
-        setUsuarioLogado(parsedUsuario);
-      } catch (error) {
-        console.error('Erro ao parsear o usuário do localStorage:', error);
-      }
-    } else {
-      navigate('/');
-    }
-  }, [navigate]);
-
-  useEffect(() => {
-    getIPUsuario();
-  }, [usuarioLogado]);
-
-  const getIPUsuario = async () => {
-    const response = await axios.get('http://ipwho.is/')
-    if (response.data) {
-      setIpUsuario(response.data.ip);
-    }
-    return response.data;
-  }
    
   const onGlobalFilterChange = (e) => {
     setGlobalFilterValueDestino(e.target.value);
@@ -317,16 +286,16 @@ export const ActionListaProdutosPromocao = ({
             IDPRODUTOORIGEM: row.IDPRODUTOORIGEM,
           }
           const response = await put('/desativar-produto-promocao-origem', putData)
-          const textDados = JSON.stringify(putData)
-          let textoFuncao = 'PROMOÇÃO/DESATIVAR PRODUTO PROMOÇÃO ORIGEM';
-          const postData = {
-            IDFUNCIONARIO: String(usuarioLogado?.id),
-            PATHFUNCAO: textoFuncao,
-            DADOS: textDados,
-            IP: ipUsuario
-          }
+          // const textDados = JSON.stringify(putData)
+          // let textoFuncao = 'PROMOÇÃO/DESATIVAR PRODUTO PROMOÇÃO ORIGEM';
+          // const postData = {
+          //   IDFUNCIONARIO: String(usuarioLogado?.id),
+          //   PATHFUNCAO: textoFuncao,
+          //   DADOS: textDados,
+          //   IP: ipUsuario
+          // }
 
-          const responsePost = await post('/log-web', postData)
+          // const responsePost = await post('/log-web', postData)
 
           Swal.fire({
             title: 'Sucesso',
@@ -345,18 +314,18 @@ export const ActionListaProdutosPromocao = ({
                 : item
             )
           );
-          return responsePost;
+          return response.data;
         } catch (error) {
-          let textoFuncao ='PROMOÇÃO/ERRO AO DESATIVAR PRODUTO PROMOÇÃO ORIGEM';
+          // let textoFuncao ='PROMOÇÃO/ERRO AO DESATIVAR PRODUTO PROMOÇÃO ORIGEM';
 
-          const postData = {
-            IDFUNCIONARIO: String(usuarioLogado?.id),
-            PATHFUNCAO: textoFuncao,
-            DADOS: textDados,
-            IP: ipUsuario
-          }
+          // const postData = {
+          //   IDFUNCIONARIO: String(usuarioLogado?.id),
+          //   PATHFUNCAO: textoFuncao,
+          //   DADOS: textDados,
+          //   IP: ipUsuario
+          // }
 
-          const responsePost = await post('/log-web', postData)
+          // const responsePost = await post('/log-web', postData)
           Swal.fire({
             title: 'Erro',
             text: `Erro ao Desativar Produto da Promoção`,
@@ -365,8 +334,8 @@ export const ActionListaProdutosPromocao = ({
               container: 'custom-swal',
             }
           });
-
-          return responsePost.data;
+          console.error('Erro ao desativar produto da promoção:', error);
+          // return responsePost.data;
         }
       }
     })
@@ -399,16 +368,16 @@ export const ActionListaProdutosPromocao = ({
           }
        
           const response = await put('/desativar-produto-promocao-destino', putData)
-          const textDados = JSON.stringify(putData)
-          let textoFuncao = 'PROMOÇÃO/DESATIVAR PRODUTO PROMOÇÃO DESTINO';
-          const postData = {
-            IDFUNCIONARIO: String(usuarioLogado?.id),
-            PATHFUNCAO: textoFuncao,
-            DADOS: textDados,
-            IP: ipUsuario
-          }
+          // const textDados = JSON.stringify(putData)
+          // let textoFuncao = 'PROMOÇÃO/DESATIVAR PRODUTO PROMOÇÃO DESTINO';
+          // const postData = {
+          //   IDFUNCIONARIO: String(usuarioLogado?.id),
+          //   PATHFUNCAO: textoFuncao,
+          //   DADOS: textDados,
+          //   IP: ipUsuario
+          // }
 
-          const responsePost = await post('/log-web', postData)
+          // const responsePost = await post('/log-web', postData)
 
           Swal.fire({
             title: 'Sucesso',
@@ -429,16 +398,7 @@ export const ActionListaProdutosPromocao = ({
           );
           return response.data;
         } catch (error) {
-          let textoFuncao ='PROMOÇÃO/ERRO AO DESATIVAR PRODUTO PROMOÇÃO DESTINO';
-
-          const postData = {
-            IDFUNCIONARIO: String(usuarioLogado?.id),
-            PATHFUNCAO: textoFuncao,
-            DADOS: '',
-            IP: ipUsuario
-          }
-
-          const responsePost = await post('/log-web', postData)
+          
           Swal.fire({
             title: 'Erro',
             text: `Erro ao Desativar Produto da Promoção`,
@@ -448,7 +408,7 @@ export const ActionListaProdutosPromocao = ({
             }
           });
 
-          return responsePost.data;
+          console.error('Erro ao desativar produto da promoção:', error);
         }
       }
     })    
