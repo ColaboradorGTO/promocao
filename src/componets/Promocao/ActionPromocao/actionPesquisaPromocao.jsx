@@ -8,7 +8,7 @@ import { MultSelectAction } from "../../Select/MultSelectAction";
 import { GrView } from "react-icons/gr";
 import { IoIosSend } from "react-icons/io";
 import { ActionCadastrarPromocaoModal } from "./ActionCadastrarPromocao/actionCadastrarPromocaoModal";
-import { ActionProdutoModal } from "../ActionPromocoesAtivas/ActionProdutos/actionProdutoModal";
+import { ActionProdutoModalPromocao} from "../ActionPromocoesAtivas/ActionProdutosDaPromocao/actionProdutoModalPromocao";
 
 
 
@@ -455,7 +455,7 @@ console.log(empresaSelecionada, "empresaSelecionada");
         handleClose={() => setModalVisivel(false)}  
       />
 
-       <ActionProdutoModal 
+       <ActionProdutoModalPromocao
         show={modalProduto}
         handleClose={() => setModalProduto(false)}
         dadosProdutosPesquisa={dadosProdutosPesquisa}
