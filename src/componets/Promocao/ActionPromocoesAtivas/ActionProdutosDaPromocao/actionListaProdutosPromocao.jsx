@@ -25,7 +25,34 @@ export const ActionListaProdutosPromocao = ({
   const [globalFilterValueDestino, setGlobalFilterValueDestino] = useState('');
   const [globalFilterValueOrigem, setGlobalFilterValueOrigem] = useState('');
   const dataTableRef = useRef();
-  
+  const [dadosDestino, setDadosDestino] = useState([]);
+  const [dadosOrigemTabela, setDadosOrigemTabela] = useState([]);
+
+
+  useEffect(() => {
+    if (Array.isArray(dadosProdutosPromocaoDaPromocao) && dadosProdutosPromocaoDaPromocao.length > 0) {
+      const destino = dadosProdutosPromocaoDaPromocao[0].empresaPromocaoDestino?.map((item) => ({
+        nItem: item['@nItem'],
+        IDPRODUTODESTINO: item.det.IDPRODUTODESTINO,
+        NUCODBARRAS: item.det.NUCODBARRAS,
+        DSNOME: item.det.DSNOME,
+        STATIVO: item.det.STATIVO === 'True' ? 'ATIVO' : 'INATIVO',
+        IDRESUMOPROMOCAOMARKETING: item.det.IDRESUMOPROMOCAOMARKETING,
+      })) || [];
+
+      const origem = dadosProdutosPromocaoDaPromocao[0].empresaPromocaoOrigem?.map((item) => ({
+        nItem: item['@nItem'],
+        IDPRODUTOORIGEM: item.det.IDPRODUTOORIGEM,
+        NUCODBARRAS: item.det.NUCODBARRAS,
+        DSNOME: item.det.DSNOME,
+        STATIVO: item.det.STATIVO === 'True' ? 'ATIVO' : 'INATIVO',
+        IDRESUMOPROMOCAOMARKETING: item.det.IDRESUMOPROMOCAOMARKETING,
+      })) || [];
+
+      setDadosDestino(destino);
+      setDadosOrigemTabela(origem);
+    }
+  }, [dadosProdutosPromocaoDaPromocao]);
 
   const [usuarioLogado, setUsuarioLogado] = useState(null);
   const [ipUsuario, setIpUsuario] = useState('');
@@ -58,44 +85,6 @@ export const ActionListaProdutosPromocao = ({
     }
     return response.data;
   }
-
-  useEffect(() => {
-    if (dadosProdutosPromocaoDaPromocao.length > 0) {
-      
-      // Pega todos os IDPRODUTODESTINO
-      const idsDestino = (dadosProdutosPromocaoDaPromocao[0].empresaPromocaoDestino || [])
-      .map(item => item?.det?.IDPRODUTODESTINO)
-        .filter(Boolean);
-        
-        // Pega todos os IDPRODUTOORIGEM
-      const idsOrigem = (dadosProdutosPromocaoDaPromocao[0].empresaPromocaoOrigem || [])
-        .map(item => item?.det?.IDPRODUTOORIGEM)
-        .filter(Boolean);
-        
-        setProdutoDestinoSelecionado(idsDestino);
-        setProdutoOrigemSelecionado(idsOrigem);
-    }
-  }, [dadosProdutosPromocaoDaPromocao, setProdutoDestinoSelecionado, setProdutoOrigemSelecionado]);
-
- const handleCheckboxChangeOrigem = (id) => {
-    const stringId = String(id);
-    setProdutoOrigemSelecionado(prev => 
-      prev.includes(stringId)
-        ? prev.filter(itemId => itemId !== stringId) 
-        : [...prev, stringId] 
-    );
-  };
-
-
-  const handleCheckboxChangeDestino = (id) => {
-    const stringId = String(id);
-    setProdutoDestinoSelecionado(prev => 
-      prev.includes(stringId)
-        ? prev.filter(itemId => itemId !== stringId) 
-        : [...prev, stringId]
-    );
-  };
- 
    
   const onGlobalFilterChange = (e) => {
     setGlobalFilterValueDestino(e.target.value);
@@ -216,7 +205,7 @@ export const ActionListaProdutosPromocao = ({
     {
       field: 'STATIVO',
       header: 'Status',
-      body: row => <th>{row.STATIVO}</th>,
+      body: row => <th style={{ color: row.STATIVO === 'ATIVO' ? 'blue' : 'red' }}>{row.STATIVO}</th>,
       sortable: true,
     },
     {
@@ -276,7 +265,11 @@ export const ActionListaProdutosPromocao = ({
     {
       field: 'STATIVO',
       header: 'Status',
-      body: row => <th>{row.STATIVO}</th>,
+      body: row => (
+        <th style={{ color: row.STATIVO === 'ATIVO' ? 'blue' : 'red' }}>
+          {row.STATIVO}
+        </th>
+      ),
       sortable: true,
     },
     {
@@ -292,8 +285,6 @@ export const ActionListaProdutosPromocao = ({
             onClickButton={() => handleDesativarOrigem(row)}
             width="40px"
             height="40px"
-            
-            
           />
         );
       },
@@ -345,8 +336,15 @@ export const ActionListaProdutosPromocao = ({
               container: 'custom-swal',
             }
           });
-          handleClose()
+          // handleClose()
           refetchProdutosPromocoes()
+          setDadosOrigemTabela((prev) =>
+            prev.map((item) =>
+              item.IDPRODUTOORIGEM === row.IDPRODUTOORIGEM
+                ? { ...item, STATIVO: 'INATIVO' }
+                : item
+            )
+          );
           return responsePost;
         } catch (error) {
           let textoFuncao ='PROMOÇÃO/ERRO AO DESATIVAR PRODUTO PROMOÇÃO ORIGEM';
@@ -399,7 +397,7 @@ export const ActionListaProdutosPromocao = ({
             IDRESUMOPROMOCAOMARKETING: row?.IDRESUMOPROMOCAOMARKETING,
             IDPRODUTODESTINO: row?.IDPRODUTODESTINO,
           }
-          console.log("Response:", putData);
+       
           const response = await put('/desativar-produto-promocao-destino', putData)
           const textDados = JSON.stringify(putData)
           let textoFuncao = 'PROMOÇÃO/DESATIVAR PRODUTO PROMOÇÃO DESTINO';
@@ -420,8 +418,15 @@ export const ActionListaProdutosPromocao = ({
               container: 'custom-swal',
             }
           });
-          handleClose()
+          // handleClose()
           refetchProdutosPromocoes()
+          setDadosDestino((prev) =>
+            prev.map((item) =>
+              item.IDPRODUTODESTINO === row.IDPRODUTODESTINO
+                ? { ...item, STATIVO: 'INATIVO' }
+                : item
+            )
+          );
           return response.data;
         } catch (error) {
           let textoFuncao ='PROMOÇÃO/ERRO AO DESATIVAR PRODUTO PROMOÇÃO DESTINO';
@@ -469,8 +474,8 @@ export const ActionListaProdutosPromocao = ({
         </div>
         <div className="card custom-swal" ref={dataTableRef}>
           <DataTable
-            title="Lista de Produtos"
-            value={dados}
+            title="Lista de Produtos" 
+            value={dadosDestino}
             size="small"
             dataKey="IDPRODUTO"
             globalFilter={globalFilterValueDestino}
@@ -522,7 +527,7 @@ export const ActionListaProdutosPromocao = ({
         <div className="card custom-swal" ref={dataTableRef}>
           <DataTable
             title="Lista de Produtos"
-            value={dadosOrigem}
+            value={dadosOrigemTabela}
             size="small"
             dataKey="IDPRODUTO"
             globalFilter={globalFilterValueOrigem}
