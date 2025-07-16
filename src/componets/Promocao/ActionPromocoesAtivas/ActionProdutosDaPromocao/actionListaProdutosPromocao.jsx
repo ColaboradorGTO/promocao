@@ -12,6 +12,7 @@ import { ButtonTable } from "../../../ButtonsTabela/ButtonTable";
 import { IoMdClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaCheck } from "react-icons/fa";
 
 export const ActionListaProdutosPromocao = ({ 
   dadosProdutosPromocaoDaPromocao, 
@@ -181,20 +182,36 @@ export const ActionListaProdutosPromocao = ({
       field: 'IDRESUMOPROMOCAOMARKETING',
       header: 'Desativar',
       body: row => {
-        return (
-          <ButtonTable
-            titleButton={"Desativar Produto Destino"}
-            textoButton={"Desativar Produto Destino na Promoção"}
-            cor={"danger"}
-            Icon={IoMdClose}
-            iconSize={22}
-            onClickButton={() => handleDesativarDestino(row)}
-            width="40px"
-            height="40px"
-            size="small"
-             disabledBTN={row.STATIVO === 'INATIVO'}
-          />
-        );
+        if(row.STATIVO === 'ATIVO') {
+          return (
+            <ButtonTable
+              titleButton={"Desativar Produto Destino"}
+              textoButton={"Desativar Produto Destino na Promoção"}
+              cor={"danger"}
+              Icon={IoMdClose}
+              iconSize={22}
+              onClickButton={() => handleDesativarDestino(row)}
+              width="40px"
+              height="40px"
+              size="small"
+              disabledBTN={row.STATIVO === 'INATIVO'}
+            />
+          );
+        } else {
+          return (
+            <ButtonTable
+              titleButton={"Ativar Produto Destino"}
+              cor={"success"}
+              Icon={FaCheck}
+              iconSize={22}
+              onClickButton={() => handleAtivarDestino(row)}
+              width="40px"
+              height="40px"
+              size="small"
+              disabledBTN={row.STATIVO === 'ATIVO'}
+            />
+          );
+        }
       },
     }
   ]
@@ -244,19 +261,34 @@ export const ActionListaProdutosPromocao = ({
     {
       field: 'IDRESUMOPROMOCAOMARKETING',
       header: 'Desativar',
-      body: row => {
-        return (
-          <ButtonTable
-            titleButton={"Desativar Produto Origem"}
-            cor={"danger"}
-            Icon={IoMdClose}
-            iconSize={22}
-            onClickButton={() => handleDesativarOrigem(row)}
-            width="40px"
-            height="40px"
-            disabledBTN={row.STATIVO === 'INATIVO'}
-          />
-        );
+       body: row => {
+        if(row.STATIVO === 'ATIVO') {
+          return (
+            <ButtonTable
+              titleButton={"Desativar Produto Origem"}
+              cor={"danger"}
+              Icon={IoMdClose}
+              iconSize={22}
+              onClickButton={() => handleDesativarOrigem(row)}
+              width="40px"
+              height="40px"
+              disabledBTN={row.STATIVO === 'INATIVO'}
+            />
+          );
+        } else {
+          return (
+            <ButtonTable
+              titleButton={"Ativar Produto Origem"}
+              cor={"success"}
+              Icon={FaCheck}
+              iconSize={22}
+              onClickButton={() => handleAtivarOrigem(row)}
+              width="40px"
+              height="40px"
+              disabledBTN={row.STATIVO === 'ATIVO'}
+            />
+          );
+        }
       },
     }
   ]
@@ -342,6 +374,83 @@ export const ActionListaProdutosPromocao = ({
     })
   }
 
+  const handleAtivarOrigem = async (row) => {
+    Swal.fire({
+      title: `Tem Certeza que Deseja Ativar o Produto da Promoção?`,
+      text: 'Você não poderá reverter a ação!',
+      icon: 'warning',
+      showCancelButton: true,
+      showConfirmButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'OK',
+      customClass: {
+        container: 'custom-swal',
+        confirmButton: 'btn btn-primary',
+        cancelButton: 'btn btn-danger',
+        loader: 'custom-loader'
+      },
+      buttonsStyling: false
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const putData = {
+            STATIVO: 'True',
+            IDRESUMOPROMOCAOMARKETING: row.IDRESUMOPROMOCAOMARKETING,
+            IDPRODUTOORIGEM: row.IDPRODUTOORIGEM,
+          }
+          const response = await put('/desativar-produto-promocao-origem', putData)
+          // const textDados = JSON.stringify(putData)
+          // let textoFuncao = 'PROMOÇÃO/ATIVAR PRODUTO PROMOÇÃO ORIGEM';
+          // const postData = {
+          //   IDFUNCIONARIO: String(usuarioLogado?.id),
+          //   PATHFUNCAO: textoFuncao,
+          //   DADOS: textDados,
+          //   IP: ipUsuario
+          // }
+
+          // const responsePost = await post('/log-web', postData)
+
+          Swal.fire({
+            title: 'Sucesso',
+            text: `Produto Ativado com Sucesso`,
+            icon: 'success',
+            customClass: {
+              container: 'custom-swal',
+            }
+          });
+          // handleClose()
+          refetchProdutosPromocoes()
+          setDadosOrigemTabela((prev) =>
+            prev.map((item) =>
+              item.IDPRODUTOORIGEM === row.IDPRODUTOORIGEM
+                ? { ...item, STATIVO: 'ATIVO' }
+                : item
+            )
+          );
+          return response.data;
+        } catch (error) {
+          // let textoFuncao ='PROMOÇÃO/ERRO AO ATIVAR PRODUTO PROMOÇÃO ORIGEM';
+
+          // const postData = {
+          //   IDFUNCIONARIO: String(usuarioLogado?.id),
+          //   PATHFUNCAO: textoFuncao,
+          //   DADOS: textDados,
+          //   IP: ipUsuario
+          // }
+          // const responsePost = await post('/log-web', postData)
+          Swal.fire({
+            title: 'Erro',
+            text: `Erro ao Ativar Produto da Promoção`,
+            icon: 'error',
+            customClass: {
+              container: 'custom-swal',
+            }
+          });
+          console.error('Erro ao ativar produto da promoção:', error);
+        }
+      }
+    })
+  }
 
   const handleDesativarDestino = async (row) => {
     Swal.fire({
@@ -415,7 +524,84 @@ export const ActionListaProdutosPromocao = ({
     })    
   }
 
+  const handleAtivarDestino = async (row) => {
+    Swal.fire({
+      title: `Tem Certeza que Deseja Ativar o Produto da Promoção?`,
+      text: 'Você não poderá reverter a ação!',
+      icon: 'warning',
+      showCancelButton: true,
+      showConfirmButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'OK',
+      customClass: {
+        container: 'custom-swal',
+        confirmButton: 'btn btn-primary',
+        cancelButton: 'btn btn-danger',
+        loader: 'custom-loader'
+      },
+      buttonsStyling: false
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const putData = {
+            STATIVO: 'True',
+            IDRESUMOPROMOCAOMARKETING: row.IDRESUMOPROMOCAOMARKETING,
+            IDPRODUTODESTINO: row.IDPRODUTODESTINO,
+          }
+          const response = await put('/desativar-produto-promocao-destino', putData)
+          // const textDados = JSON.stringify(putData)
+          // let textoFuncao = 'PROMOÇÃO/ATIVAR PRODUTO PROMOÇÃO DESTINO';
+          // const postData = {
+          //   IDFUNCIONARIO: String(usuarioLogado?.id),
+          //   PATHFUNCAO: textoFuncao,
+          //   DADOS: textDados,
+          //   IP: ipUsuario
+          // }
 
+          // const responsePost = await post('/log-web', postData)
+
+          Swal.fire({
+            title: 'Sucesso',
+            text: `Produto Ativado com Sucesso`,
+            icon: 'success',
+            customClass: {
+              container: 'custom-swal',
+            }
+          });
+          // handleClose()
+          refetchProdutosPromocoes()
+          setDadosDestino((prev) =>
+            prev.map((item) =>
+              item.IDPRODUTODESTINO === row.IDPRODUTODESTINO
+                ? { ...item, STATIVO: 'ATIVO' }
+                : item
+            )
+          );
+          return responsePost;
+        } catch (error) {
+          // let textoFuncao ='PROMOÇÃO/ERRO AO ATIVAR PRODUTO PROMOÇÃO DESTINO';
+
+          // const postData = {
+          //   IDFUNCIONARIO: String(usuarioLogado?.id),
+          //   PATHFUNCAO: textoFuncao,
+          //   DADOS: textDados,
+          //   IP: ipUsuario
+          // }
+          // const responsePost = await post('/log-web', postData)
+          Swal.fire({
+            title: 'Erro',
+            text: `Erro ao Ativar Produto da Promoção`,
+            icon: 'error',
+            customClass: {
+              container: 'custom-swal',
+            }
+          });
+          // return responsePost.data;
+          console.error('Erro ao ativar produto da promoção:', error);
+        }
+      }
+    })
+  }
   return (
     <Fragment>
 
