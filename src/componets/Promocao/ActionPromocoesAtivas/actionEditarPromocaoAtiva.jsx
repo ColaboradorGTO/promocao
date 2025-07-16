@@ -323,7 +323,7 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
       setFileProdutoOrigem([]); 
     }
   }, [novoProdutoOrigem, setProdutoOrigem, setFileProdutoOrigem]);
-  console.log(valorSelecionado, 'valorSelecionado')
+
 
   return (
     <Fragment>
@@ -500,6 +500,8 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
         labelInputFieldProdutoDestino={"Produto Destino"}
         valueInputFieldProdutoDestino={produtoDestino}
         onChangeInputFieldProdutoDestino={(e) => setProdutoDestino(e.target.value)}
+        // valueInputFieldProdutoDestino={novoProdutoDestino.join(', ')} // Mostra todos IDs separados por vírgula
+        // onChangeInputFieldProdutoDestino={(e) => setNovoProdutoDestino(e.target.value.split(',').map(s => s.trim()))}
         // onChangeInputFieldProdutoDestino={(e) => {
         //   const value = e.target.value;
         //   setProdutoDestino(value ? [value] : []);
