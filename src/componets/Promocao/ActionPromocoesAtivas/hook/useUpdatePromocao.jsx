@@ -152,7 +152,6 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     setVrDesconto(dadosPromocao[0]?.FATORPROMOVLR)
    
     setPrecoProduto(dadosPromocao[0]?.VLPRECOPRODUTO)
-    // setPorcentoDesconto(toFloat(dadosPromocao[0]?.FATORPROMOPERC))
     setMecanicaSelecionadaEdicao(dadosPromocao[0]?.DSPROMOCAOMARKETING)
     setMecanicaSelecionada(dadosPromocao[0]?.DSPROMOCAOMARKETING)
     setDescricao(dadosPromocao[0]?.DSPROMOCAOMARKETING)
@@ -293,52 +292,114 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     return result;
   }
 
+  // const mostrarProdutosSelecionados = useCallback((tipo) => {
+  //   let produtos = [];
+  //   let titulo = '';
+  //   if (tipo === 'origem') {
+  //     if (fileProdutoOrigem && fileProdutoOrigem.length > 0) {
+  //       try {
+  //         produtos = JSON.parse(fileProdutoOrigem);
+  //       } catch {
+  //         produtos = [];
+  //       }
+  //     } else if (produtoOrigem) {
+  //       produtos = [produtoOrigem];
+  //     }
+  //     titulo = 'Produtos Origem Selecionados/Digitados';
+  //   } else if (tipo === 'destino') {
+  //     if (fileProdutoDestino && fileProdutoDestino.length > 0) {
+  //       try {
+  //         produtos = JSON.parse(fileProdutoDestino);
+  //       } catch {
+  //         produtos = [];
+  //       }
+  //     } else if (produtoDestino) {
+  //       produtos = [produtoDestino];
+  //     }
+  //     titulo = 'Produtos Destino Selecionados/Digitados';
+  //   }
+
+  //   if (produtos.length === 0) {
+  //     Swal.fire({
+  //       icon: 'info',
+  //       title: titulo,
+  //       text: 'Nenhum produto informado.',
+  //     });
+  //     return;
+  //   }
+
+  //   Swal.fire({
+  //     icon: 'info',
+  //     title: titulo,
+  //     html: `<pre style="text-align:left">${produtos.join('<br>')}</pre>`,
+  //     customClass: {
+  //       container: 'custom-swal',
+  //     },
+  //     confirmButtonText: 'OK'
+  //   });
+  // }, [fileProdutoOrigem, fileProdutoDestino, produtoOrigem, produtoDestino]);
+
   const mostrarProdutosSelecionados = useCallback((tipo) => {
-    let produtos = [];
-    let titulo = '';
-    if (tipo === 'origem') {
-      if (fileProdutoOrigem && fileProdutoOrigem.length > 0) {
-        try {
-          produtos = JSON.parse(fileProdutoOrigem);
-        } catch {
-          produtos = [];
-        }
-      } else if (produtoOrigem) {
-        produtos = [produtoOrigem];
-      }
-      titulo = 'Produtos Origem Selecionados/Digitados';
-    } else if (tipo === 'destino') {
-      if (fileProdutoDestino && fileProdutoDestino.length > 0) {
-        try {
-          produtos = JSON.parse(fileProdutoDestino);
-        } catch {
-          produtos = [];
-        }
-      } else if (produtoDestino) {
-        produtos = [produtoDestino];
-      }
-      titulo = 'Produtos Destino Selecionados/Digitados';
-    }
+  let produtos = [];
+  let titulo = '';
 
-    if (produtos.length === 0) {
-      Swal.fire({
-        icon: 'info',
-        title: titulo,
-        text: 'Nenhum produto informado.',
-      });
-      return;
+  if (tipo === 'origem') {
+    // Produtos do arquivo
+    if (fileProdutoOrigem && fileProdutoOrigem.length > 0) {
+      try {
+        produtos = JSON.parse(fileProdutoOrigem);
+      } catch {
+        produtos = [];
+      }
     }
+    // Produto digitado no input
+    if (produtoOrigem) {
+      produtos = [...produtos, produtoOrigem];
+    }
+    // Produtos selecionados via checkbox
+    if (novoProdutoOrigem && novoProdutoOrigem.length > 0) {
+      produtos = [...produtos, ...novoProdutoOrigem];
+    }
+    titulo = 'Produtos Origem Selecionados';
+  } else if (tipo === 'destino') {
+    if (fileProdutoDestino && fileProdutoDestino.length > 0) {
+      try {
+        produtos = JSON.parse(fileProdutoDestino);
+      } catch {
+        produtos = [];
+      }
+    }
+    if (produtoDestino) {
+      produtos = [...produtos, produtoDestino];
+    }
+    if (novoProdutoDestino && novoProdutoDestino.length > 0) {
+      produtos = [...produtos, ...novoProdutoDestino];
+    }
+    titulo = 'Produtos Destino Selecionados';
+  }
 
+  // Remove duplicados
+  produtos = [...new Set(produtos.filter(Boolean))];
+
+  if (produtos.length === 0) {
     Swal.fire({
       icon: 'info',
       title: titulo,
-      html: `<pre style="text-align:left">${produtos.join('<br>')}</pre>`,
-      customClass: {
-        container: 'custom-swal',
-      },
-      confirmButtonText: 'OK'
+      text: 'Nenhum produto informado.',
     });
-  }, [fileProdutoOrigem, fileProdutoDestino, produtoOrigem, produtoDestino]);
+    return;
+  }
+
+  Swal.fire({
+    icon: 'info',
+    title: `${titulo} (${produtos.length} produtos)`,
+    html: `<pre style="text-align:left">${produtos.join('<br>')}</pre>`,
+    customClass: {
+      container: 'custom-swal',
+    },
+    confirmButtonText: 'OK'
+  });
+}, [fileProdutoOrigem, fileProdutoDestino, produtoOrigem, produtoDestino, novoProdutoOrigem, novoProdutoDestino]);
 
   const mostrarEmpresasPromocao = useCallback(() => {
     Swal.fire({
@@ -466,12 +527,6 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     [empresasSelecionadas]
   );
 
-      //  {console.log(produtosDestino, 'produtosDestino')};
-      // {console.log(produtosOrigem, 'produtosOrigem')};
-      // {console.log(produtoDestinoSelecionado, 'produtoDestinoSelecionado')};
-      // {console.log(produtoOrigemSelecionado, 'produtoOrigemSelecionado')};
-      // {console.log(novoProdutoDestino, 'novoProdutoDestino')};
-      // {console.log(novoProdutoOrigem, 'novoProdutoOrigem')};
   const onSubmit = async (data) => {
     
     try {
