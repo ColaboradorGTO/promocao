@@ -57,6 +57,11 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
   const [produtoOrigemSelecionado, setProdutoOrigemSelecionado] = useState([]);
   const [novoProdutoDestino, setNovoProdutoDestino] = useState([]);
   const [novoProdutoOrigem, setNovoProdutoOrigem] = useState([]);
+  const [modalEmpresasPromocao, setModalEmpresasPromocao] = useState(false);
+  const [modalPodutoSelecionadoOrigem, setModalPodutoSelecionadoOrigem] = useState(false);
+  const [modalPodutoSelecionadoDestino, setModalPodutoSelecionadoDestino] = useState(false);
+  const [dadosEmpresasPromocoes, setDadosEmpresasPromocoes] = useState([]);
+ 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -292,58 +297,56 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     return result;
   }
 
-  // const mostrarProdutosSelecionados = useCallback((tipo) => {
-  //   let produtos = [];
-  //   let titulo = '';
-  //   if (tipo === 'origem') {
-  //     if (fileProdutoOrigem && fileProdutoOrigem.length > 0) {
-  //       try {
-  //         produtos = JSON.parse(fileProdutoOrigem);
-  //       } catch {
-  //         produtos = [];
-  //       }
-  //     } else if (produtoOrigem) {
-  //       produtos = [produtoOrigem];
-  //     }
-  //     titulo = 'Produtos Origem Selecionados/Digitados';
-  //   } else if (tipo === 'destino') {
-  //     if (fileProdutoDestino && fileProdutoDestino.length > 0) {
-  //       try {
-  //         produtos = JSON.parse(fileProdutoDestino);
-  //       } catch {
-  //         produtos = [];
-  //       }
-  //     } else if (produtoDestino) {
-  //       produtos = [produtoDestino];
-  //     }
-  //     titulo = 'Produtos Destino Selecionados/Digitados';
-  //   }
-
-  //   if (produtos.length === 0) {
-  //     Swal.fire({
-  //       icon: 'info',
-  //       title: titulo,
-  //       text: 'Nenhum produto informado.',
-  //     });
-  //     return;
-  //   }
-
-  //   Swal.fire({
-  //     icon: 'info',
-  //     title: titulo,
-  //     html: `<pre style="text-align:left">${produtos.join('<br>')}</pre>`,
-  //     customClass: {
-  //       container: 'custom-swal',
-  //     },
-  //     confirmButtonText: 'OK'
-  //   });
-  // }, [fileProdutoOrigem, fileProdutoDestino, produtoOrigem, produtoDestino]);
-
   const mostrarProdutosSelecionados = useCallback((tipo) => {
-  let produtos = [];
-  let titulo = '';
+    let produtos = [];
+    let titulo = '';
+    if (tipo === 'origem') {
+      if (fileProdutoOrigem && fileProdutoOrigem.length > 0) {
+        try {
+          produtos = JSON.parse(fileProdutoOrigem);
+        } catch {
+          produtos = [];
+        }
+      } else if (produtoOrigem) {
+        produtos = [produtoOrigem];
+      }
+      titulo = 'Produtos Origem Selecionados/Digitados';
+    } else if (tipo === 'destino') {
+      if (fileProdutoDestino && fileProdutoDestino.length > 0) {
+        try {
+          produtos = JSON.parse(fileProdutoDestino);
+        } catch {
+          produtos = [];
+        }
+      } else if (produtoDestino) {
+        produtos = [produtoDestino];
+      }
+      titulo = 'Produtos Destino Selecionados/Digitados';
+    }
 
-  if (tipo === 'origem') {
+    if (produtos.length === 0) {
+      Swal.fire({
+        icon: 'info',
+        title: titulo,
+        text: 'Nenhum produto informado.',
+      });
+      return;
+    }
+
+    Swal.fire({
+      icon: 'info',
+      title: titulo,
+      html: `<pre style="text-align:left">${produtos.join('<br>')}</pre>`,
+      customClass: {
+        container: 'custom-swal',
+      },
+      confirmButtonText: 'OK'
+    });
+  }, [fileProdutoOrigem, fileProdutoDestino, produtoOrigem, produtoDestino]);
+
+  const mostrarProdutosSelecionadosOrigem = useCallback(() => {
+    let produtos = [];
+
     // Produtos do arquivo
     if (fileProdutoOrigem && fileProdutoOrigem.length > 0) {
       try {
@@ -360,8 +363,42 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     if (novoProdutoOrigem && novoProdutoOrigem.length > 0) {
       produtos = [...produtos, ...novoProdutoOrigem];
     }
-    titulo = 'Produtos Origem Selecionados';
-  } else if (tipo === 'destino') {
+
+    // Remove duplicados pelo IDPRODUTO se for objeto, ou pelo valor se for string
+    produtos = produtos.filter(Boolean);
+    const produtosUnicos = [];
+    const ids = new Set();
+    for (const p of produtos) {
+      if (typeof p === 'object' && p !== null && p.IDPRODUTO) {
+        if (!ids.has(p.IDPRODUTO)) {
+          ids.add(p.IDPRODUTO);
+          produtosUnicos.push(p);
+        }
+      } else if (typeof p === 'string' || typeof p === 'number') {
+        if (!ids.has(p)) {
+          ids.add(p);
+          produtosUnicos.push(p);
+        }
+      }
+    }
+
+    if (produtosUnicos.length === 0) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Produtos Origem Selecionados',
+        text: 'Nenhum produto informado.',
+      });
+      return;
+    }
+
+    setModalPodutoSelecionadoOrigem(true);
+    setProdutoOrigemSelecionado(produtosUnicos);
+  }, [fileProdutoOrigem, produtoOrigem, novoProdutoOrigem]);
+
+  const mostrarProdutosSelecionadosDestino = useCallback(() => {
+    let produtos = [];
+
+    // Produtos do arquivo
     if (fileProdutoDestino && fileProdutoDestino.length > 0) {
       try {
         produtos = JSON.parse(fileProdutoDestino);
@@ -369,53 +406,74 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
         produtos = [];
       }
     }
+    // Produto digitado no input
     if (produtoDestino) {
       produtos = [...produtos, produtoDestino];
     }
+    // Produtos selecionados via checkbox
     if (novoProdutoDestino && novoProdutoDestino.length > 0) {
       produtos = [...produtos, ...novoProdutoDestino];
     }
-    titulo = 'Produtos Destino Selecionados';
-  }
 
-  // Remove duplicados
-  produtos = [...new Set(produtos.filter(Boolean))];
+    // Remove duplicados pelo IDPRODUTO se for objeto, ou pelo valor se for string
+    produtos = produtos.filter(Boolean);
+    const produtosUnicos = [];
+    const ids = new Set();
+    for (const p of produtos) {
+      if (typeof p === 'object' && p !== null && p.IDPRODUTO) {
+        if (!ids.has(p.IDPRODUTO)) {
+          ids.add(p.IDPRODUTO);
+          produtosUnicos.push(p);
+        }
+      } else if (typeof p === 'string' || typeof p === 'number') {
+        if (!ids.has(p)) {
+          ids.add(p);
+          produtosUnicos.push(p);
+        }
+      }
+    }
 
-  if (produtos.length === 0) {
-    Swal.fire({
-      icon: 'info',
-      title: titulo,
-      text: 'Nenhum produto informado.',
-    });
-    return;
-  }
+    if (produtosUnicos.length === 0) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Produtos Destino Selecionados',
+        text: 'Nenhum produto informado.',
+      });
+      return;
+    }
 
-  Swal.fire({
-    icon: 'info',
-    title: `${titulo} (${produtos.length} produtos)`,
-    html: `<pre style="text-align:left">${produtos.join('<br>')}</pre>`,
-    customClass: {
-      container: 'custom-swal',
-    },
-    confirmButtonText: 'OK'
-  });
-}, [fileProdutoOrigem, fileProdutoDestino, produtoOrigem, produtoDestino, novoProdutoOrigem, novoProdutoDestino]);
+    setModalPodutoSelecionadoDestino(true);
+    setProdutoDestinoSelecionado(produtosUnicos);
+  }, [fileProdutoDestino, produtoDestino, novoProdutoDestino, setProdutoDestinoSelecionado]);
 
-  const mostrarEmpresasPromocao = useCallback(() => {
-    Swal.fire({
-      icon: 'info',
-      title: 'Empresas Vinculadas à Promoção',
-      html: `<pre style="text-align:left">${
-      optionsEmpresasPromocoes && optionsEmpresasPromocoes.length > 0
-        ? optionsEmpresasPromocoes.map(item => item.NOFANTASIA).join('<br>')
-        : 'Nenhuma empresa vinculada.'
-      }</pre>`,
-      customClass: {
-      container: 'custom-swal',
-      },
-      confirmButtonText: 'OK'
-    });
-  }, [optionsEmpresasPromocoes]);
+  // const mostrarEmpresasPromocao = useCallback(() => {
+  //   Swal.fire({
+  //     icon: 'info',
+  //     title: 'Empresas Vinculadas à Promoção',
+  //     html: `<pre style="text-align:left">${
+  //     optionsEmpresasPromocoes && optionsEmpresasPromocoes.length > 0
+  //       ? optionsEmpresasPromocoes.map(item => item.NOFANTASIA).join('<br>')
+  //       : 'Nenhuma empresa vinculada.'
+  //     }</pre>`,
+  //     customClass: {
+  //     container: 'custom-swal',
+  //     },
+  //     confirmButtonText: 'OK'
+  //   });
+  // }, [optionsEmpresasPromocoes]);
+
+  const mostrarEmpresasPromocao = async () => {
+    try {
+      const response = await get(`/empresa-promocoes-ativas?idResumoPromocao=${idResumoPromocao}`);
+      if (response) {
+        setDadosEmpresasPromocoes(response.data);
+        setModalEmpresasPromocao(true);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar detalhes da venda: ', error);
+    }
+  };
+  
 
   const mostrarProdutosPromocao = useCallback(() => {
     Swal.fire({
@@ -446,43 +504,171 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     }
   }
 
-  const handlePesquisarProdutoOrigem = useCallback(async (tipo) => {
-    const produtosOrigem = fileProdutoOrigem && fileProdutoOrigem.length > 0 ? JSON.parse(fileProdutoOrigem) : produtoOrigem ? [produtoOrigem] : [];
-    const produtoOrigemArray = Array.isArray(produtosOrigem) ? produtosOrigem : [produtosOrigem];
+  // const handlePesquisarProdutoOrigem = useCallback(async (tipo) => {
+  //   const produtosOrigem = fileProdutoOrigem && fileProdutoOrigem.length > 0 ? JSON.parse(fileProdutoOrigem) : produtoOrigem ? [produtoOrigem] : [];
+  //   const produtoOrigemArray = Array.isArray(produtosOrigem) ? produtosOrigem : [produtosOrigem];
 
-    const termoPesquisa = produtoOrigemArray[0] || "";
+  //   const termoPesquisa = produtoOrigemArray[0] || "";
 
-    if (/^\d+$/.test(termoPesquisa)) {
-      const response1 = await get(`/produto-promocao-ativa?idProduto=${termoPesquisa}&codBarras=${termoPesquisa}`);
-      setDadosProdutosPesquisa(response1.data);
-    } else if (termoPesquisa.length > 0) {
-      const response = await get(`/produto-promocao-ativa?dsProduto=${termoPesquisa}`);
-      setDadosProdutosPesquisa(response.data);
-    } else {
-      setDadosProdutosPesquisa([]);
-    }
-    setModalProdutoOrigem(true);
-  }, [fileProdutoOrigem, produtoOrigem]);
+  //   // Pergunta ao usuário como deseja pesquisar
+  //   const { value: tipoPesquisa } = await Swal.fire({
+  //     title: 'Como deseja pesquisar o produto origem?',
+  //     input: 'select',
+  //     inputOptions: {
+  //       idProduto: 'ID Produto',
+  //       codBarras: 'Código de Barras',
+  //       dsProduto: 'Descrição do Produto'
+  //     },
+  //     inputPlaceholder: 'Selecione o tipo de pesquisa',
+  //     showCancelButton: true,
+  //     confirmButtonText: 'Pesquisar',
+  //     cancelButtonText: 'Cancelar',
+  //     customClass: {
+  //       container: 'custom-swal',
+  //     }
+  //   });
 
-  const handlePesquisarProdutoDestino = useCallback(async (tipo) => {
-    const produtosDestino = fileProdutoDestino && fileProdutoDestino.length > 0 ? JSON.parse(fileProdutoDestino) : produtoDestino ? [produtoDestino] : [];
-    const produtoDestinoArray = Array.isArray(produtosDestino) ? produtosDestino : [produtosDestino];
+  //   if (!tipoPesquisa) return;
 
-    const termoPesquisa = produtoDestinoArray[0] || "";
+  //   if (tipoPesquisa === 'idProduto' && /^\d+$/.test(termoPesquisa)) {
+  //     const response = await get(`/produto-promocao-ativa?idProduto=${termoPesquisa}`);
+  //     setDadosProdutosPesquisa(response.data);
+  //   } else if (tipoPesquisa === 'codBarras' && termoPesquisa.length > 0) {
+  //     const response = await get(`/produto-promocao-ativa?codBarras=${termoPesquisa}`);
+  //     setDadosProdutosPesquisa(response.data);
+  //   } else if (tipoPesquisa === 'dsProduto' && termoPesquisa.length > 0) {
+  //     const response = await get(`/produto-promocao-ativa?dsProduto=${termoPesquisa}`);
+  //     setDadosProdutosPesquisa(response.data);
+  //   } else {
+  //     setDadosProdutosPesquisa([]);
+  //   }
+  //   setModalProdutoOrigem(true);
+  // }, [fileProdutoOrigem, produtoOrigem]);
 
-    if (/^\d+$/.test(termoPesquisa)) {
-      const response1 = await get(`/produto-promocao-ativa?idProduto=${termoPesquisa}&codBarras=${termoPesquisa}`);
-      setDadosProdutosPesquisa(response1.data);
-    } else if (termoPesquisa.length > 0) {
-      const response = await get(`/produto-promocao-ativa?dsProduto=${termoPesquisa}`);
-      setDadosProdutosPesquisa(response.data);
-    } else {
-      setDadosProdutosPesquisa([]);
-    }
-    setModalProdutoDestino(true);
-  }, [fileProdutoOrigem, fileProdutoDestino, produtoOrigem, produtoDestino]);
+  // const handlePesquisarProdutoDestino = useCallback(async (tipo) => {
+  //   const produtosDestino = fileProdutoDestino && fileProdutoDestino.length > 0 ? JSON.parse(fileProdutoDestino) : produtoDestino ? [produtoDestino] : [];
+  //   const produtoDestinoArray = Array.isArray(produtosDestino) ? produtosDestino : [produtosDestino];
+
+  //   const termoPesquisa = produtoDestinoArray[0] || "";
+
+  //   // Pergunta ao usuário como deseja pesquisar
+  //   const { value: tipoPesquisa } = await Swal.fire({
+  //     title: 'Como deseja pesquisar o produto destino?',
+  //     input: 'select',
+  //     inputOptions: {
+  //       idProduto: 'ID Produto',
+  //       codBarras: 'Código de Barras',
+  //       dsProduto: 'Descrição do Produto'
+  //     },
+  //     inputPlaceholder: 'Selecione o tipo de pesquisa',
+  //     showCancelButton: true,
+  //     confirmButtonText: 'Pesquisar',
+  //     cancelButtonText: 'Cancelar',
+  //     customClass: {
+  //       container: 'custom-swal',
+  //     }
+  //   });
+
+  //   if (!tipoPesquisa) return;
+
+  //   if (tipoPesquisa === 'idProduto' && /^\d+$/.test(termoPesquisa)) {
+  //     const response = await get(`/produto-promocao-ativa?idProduto=${termoPesquisa}`);
+  //     setDadosProdutosPesquisa(response.data);
+  //   } else if (tipoPesquisa === 'codBarras' && termoPesquisa.length > 0) {
+  //     const response = await get(`/produto-promocao-ativa?codBarras=${termoPesquisa}`);
+  //     setDadosProdutosPesquisa(response.data);
+  //   } else if (tipoPesquisa === 'dsProduto' && termoPesquisa.length > 0) {
+  //     const response = await get(`/produto-promocao-ativa?dsProduto=${termoPesquisa}`);
+  //     setDadosProdutosPesquisa(response.data);
+  //   } else {
+  //     setDadosProdutosPesquisa([]);
+  //   }
+  //   setModalProdutoDestino(true);
+  // }, [fileProdutoDestino, produtoDestino]);
 
   
+    const handlePesquisarProdutoOrigem = useCallback(async (tipo) => {
+      const produtosOrigem = fileProdutoOrigem && fileProdutoOrigem.length > 0 ? JSON.parse(fileProdutoOrigem) : produtoOrigem ? [produtoOrigem] : [];
+      const produtoOrigemArray = Array.isArray(produtosOrigem) ? produtosOrigem : [produtosOrigem];
+      const termoPesquisa = produtoOrigemArray[0] || "";
+  
+      const { value: tipoPesquisa } = await Swal.fire({
+        title: 'Como deseja pesquisar o produto?',
+        input: 'radio',
+        inputOptions: {
+          idProduto: 'ID Produto',
+          codBarras: 'Código de Barras',
+          dsProduto: 'Descrição do Produto'
+        },
+        inputValidator: (value) => {
+          if (!value) {
+            return 'Selecione uma opção!';
+          }
+        },
+        confirmButtonText: 'Pesquisar',
+        showCancelButton: true,
+        customClass: { container: 'custom-swal' }
+      });
+  
+      if (!tipoPesquisa) return;
+  
+      let response;
+      if (tipoPesquisa === 'idProduto') {
+        response = await get(`/produto-promocao-ativa?idProduto=${termoPesquisa}`);
+      } else if (tipoPesquisa === 'codBarras') {
+        response = await get(`/produto-promocao-ativa?codBarras=${termoPesquisa}`);
+      } else if (tipoPesquisa === 'dsProduto') {
+        response = await get(`/produto-promocao-ativa?dsProduto=${termoPesquisa}`);
+      }
+  
+      setDadosProdutosPesquisa(response?.data || []);
+      setModalProdutoOrigem(true);
+    }, [fileProdutoOrigem, produtoOrigem]);
+  
+    const handlePesquisarProdutoDestino = useCallback(async (tipo) => {
+      const produtosDestino = fileProdutoDestino && fileProdutoDestino.length > 0 ? JSON.parse(fileProdutoDestino) : produtoDestino ? [produtoDestino] : [];
+      const produtoDestinoArray = Array.isArray(produtosDestino) ? produtosDestino : [produtosDestino];
+      const termoPesquisa = produtoDestinoArray[0] || "";
+  
+      if (!termoPesquisa) {
+        setDadosProdutosPesquisa([]);
+        setModalProdutoDestino(true);
+        return;
+      }
+  
+      const { value: tipoPesquisa } = await Swal.fire({
+        title: 'Como deseja pesquisar o produto?',
+        input: 'radio',
+        inputOptions: {
+          idProduto: 'ID Produto',
+          codBarras: 'Código de Barras',
+          dsProduto: 'Descrição do Produto'
+        },
+        inputValidator: (value) => {
+          if (!value) {
+            return 'Selecione uma opção!';
+          }
+        },
+        confirmButtonText: 'Pesquisar',
+        showCancelButton: true,
+        customClass: { container: 'custom-swal' }
+      });
+  
+      if (!tipoPesquisa) return;
+  
+      let response;
+      if (tipoPesquisa === 'idProduto') {
+        response = await get(`/produto-promocao-ativa?idProduto=${termoPesquisa}`);
+      } else if (tipoPesquisa === 'codBarras') {
+        response = await get(`/produto-promocao-ativa?codBarras=${termoPesquisa}`);
+      } else if (tipoPesquisa === 'dsProduto') {
+        response = await get(`/produto-promocao-ativa?dsProduto=${termoPesquisa}`);
+      }
+  
+      setDadosProdutosPesquisa(response?.data || []);
+      setModalProdutoDestino(true);
+    }, [fileProdutoDestino, produtoDestino]);
+
   const empresasFiltradas = useMemo(() => {
     const empresasArray = Array.isArray(optionsEmpresas) ? optionsEmpresas : [];
 
@@ -526,6 +712,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     () => empresasSelecionadas.map(e => e.value),
     [empresasSelecionadas]
   );
+  
 
   const onSubmit = async (data) => {
     
@@ -577,8 +764,24 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
         return;
       }
 
-      const produtosOrigem = fileProdutoOrigem && fileProdutoOrigem.length > 0 ? JSON.parse(fileProdutoOrigem) : produtoOrigem ? [produtoOrigem] : [];
-      const produtosDestino = fileProdutoDestino && fileProdutoDestino.length > 0 ? JSON.parse(fileProdutoDestino) : produtoDestino ? [produtoDestino] : [];
+      // Considera produtos de origem e destino vindos do arquivo, input ou seleção manual
+      const produtosOrigem = 
+        (fileProdutoOrigem && fileProdutoOrigem.length > 0)
+          ? JSON.parse(fileProdutoOrigem)
+          : produtoOrigem
+        ? [produtoOrigem]
+        : (produtoOrigemSelecionado && produtoOrigemSelecionado.length > 0)
+          ? produtoOrigemSelecionado
+          : [];
+
+      const produtosDestino = 
+        (fileProdutoDestino && fileProdutoDestino.length > 0)
+          ? JSON.parse(fileProdutoDestino)
+          : produtoDestino
+        ? [produtoDestino]
+        : (produtoDestinoSelecionado && produtoDestinoSelecionado.length > 0)
+          ? produtoDestinoSelecionado
+          : [];
 
 
       if (promocoesAtivas && promocoesAtivas.length > 0) {
@@ -609,7 +812,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
           const existeProduto = produtosExistentes.some(produto =>
             produtoDestinoArray.includes(produto.IDPRODUTO)
           );
-          console.log(existeProduto, 'existeProduto');
+          
        
     
           if (existeProduto) {
@@ -734,7 +937,6 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
       }
 
       if (aplicacaoDestinoSelecionada == 4) {
-
         if (produtosDestino.length !== 1 || produtosOrigem.length !== 1) {
           Swal.fire({
             position: 'center',
@@ -747,8 +949,12 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
           });
           return;
         }
-
-        if (produtosDestino[0] !== produtosOrigem[0]) {
+        
+     
+        const origemId = typeof produtosOrigem[0] === 'object' && produtosOrigem[0] !== null ? produtosOrigem[0].IDPRODUTO : produtosOrigem[0];
+        const destinoId = typeof produtosDestino[0] === 'object' && produtosDestino[0] !== null ? produtosDestino[0].IDPRODUTO : produtosDestino[0];
+        if (origemId !== destinoId) {
+          
           Swal.fire({
             position: 'center',
             icon: 'error',
@@ -762,6 +968,18 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
         }
       }
  
+      const extractIds = arr => {
+        if (!arr) return [];
+        if (Array.isArray(arr)) {
+          return arr
+        .map(item => typeof item === 'object' && item !== null && item.IDPRODUTO ? item.IDPRODUTO : item)
+        .filter(Boolean);
+        }
+        if (typeof arr === 'object' && arr !== null && arr.IDPRODUTO) {
+          return [arr.IDPRODUTO];
+        }
+        return [arr];
+      }
 
       const putData = {
         DSPROMOCAOMARKETING: descricao.toUpperCase(),
@@ -775,42 +993,38 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
         FATORPROMOPERC: Number(porcentoDesconto),
         TPAPARTIRDE: dadosPromocao[0]?.TPAPARTIRDE,
         VLPRECOPRODUTO: Number(precoProduto),
-        STEMPRESAPROMO: statusSelecionado,
+        STEMPRESAPROMO: "True",
         STDETPROMOORIGEM: "True",
         STDETPROMODESTINO: "True",
         IDMECANICARESUMOPROMOCAOMARKETING: dadosPromocao[0]?.IDMECANICARESUMOPROMOCAOMARKETING,
         STATIVO: statusSelecionado,
-
         IDRESUMOPROMOCAOMARKETING: dadosPromocao[0]?.IDRESUMOPROMOCAOMARKETING,
-
-        IDPRODUTO: [
-          ...(Array.isArray(produtosDestino) ? produtosDestino : produtosDestino ? [produtosDestino] : []),
-          ...(Array.isArray(produtoDestinoSelecionado) ? produtoDestinoSelecionado : produtoDestinoSelecionado ? [produtoDestinoSelecionado] : []),
-          ...(Array.isArray(novoProdutoDestino) ? novoProdutoDestino : novoProdutoDestino ? [novoProdutoDestino] : []),
-        ],
-
         IDEMPRESA: empresasSelecionadasValues,
         IDGRUPOEMDESTINO: grupoSelecionado,
         IDSUBGRUPOEMDESTINO: subGrupoSelecionado,
         IDMARCAEMDESTINO: marcaDestino,
         IDFORNECEDOREMDESTINO: fornecedorSelecionado,
-        IDPRODUTODESTINO: [
-          ...(Array.isArray(produtosDestino) ? produtosDestino : produtosDestino ? [produtosDestino] : []),
-          ...(Array.isArray(produtoDestinoSelecionado) ? produtoDestinoSelecionado : produtoDestinoSelecionado ? [produtoDestinoSelecionado] : []),
-          ...(Array.isArray(novoProdutoDestino) ? novoProdutoDestino : novoProdutoDestino ? [novoProdutoDestino] : []),
-        ],
         IDGRUPOEMORIGEM: grupoSelecionado,
         IDSUBGRUPOEMORIGEM: subGrupoSelecionado,
         IDMARCAEMORIGEM: marcaOrigem,
         IDFORNECEDOREMORIGEM: fornecedorSelecionado,
-
-        // Envia as três formas possíveis para IDPRODUTOORIGEM
-        IDPRODUTOORIGEM: [
-          ...(Array.isArray(produtosOrigem) ? produtosOrigem : produtosOrigem ? [produtosOrigem] : []),
-          ...(Array.isArray(produtoOrigemSelecionado) ? produtoOrigemSelecionado : produtoOrigemSelecionado ? [produtoOrigemSelecionado] : []),
-          ...(Array.isArray(novoProdutoOrigem) ? novoProdutoOrigem : novoProdutoOrigem ? [novoProdutoOrigem] : []),
-        ].filter(Boolean),
+        IDPRODUTO: Array.from(new Set([
+          ...extractIds(produtosDestino),
+          ...extractIds(produtoDestinoSelecionado),
+          ...extractIds(novoProdutoDestino),
+        ])),
+        IDPRODUTODESTINO: Array.from(new Set([
+          ...extractIds(produtosDestino),
+          ...extractIds(produtoDestinoSelecionado),
+          ...extractIds(novoProdutoDestino),
+        ])),
+        IDPRODUTOORIGEM: Array.from(new Set([
+          ...extractIds(produtosOrigem),
+          ...extractIds(produtoOrigemSelecionado),
+          ...extractIds(novoProdutoOrigem),
+        ].filter(Boolean))),
       };
+      
 
       let timerInterval;
       Swal.fire({
@@ -1043,6 +1257,17 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     novoProdutoOrigem,
     setNovoProdutoOrigem,
     refetchProdutosPromocoes,
+    setModalPodutoSelecionadoDestino,
+    setModalPodutoSelecionadoOrigem,
+    modalPodutoSelecionadoDestino,
+    modalPodutoSelecionadoOrigem,
+    modalEmpresasPromocao,
+    setModalEmpresasPromocao,
+    dadosEmpresasPromocoes,
+    setDadosEmpresasPromocoes,
+    mostrarProdutosSelecionadosOrigem,
+    mostrarProdutosSelecionadosDestino,
+    refetchEmpresasPromocoes,
     onSubmit
   }
 }
