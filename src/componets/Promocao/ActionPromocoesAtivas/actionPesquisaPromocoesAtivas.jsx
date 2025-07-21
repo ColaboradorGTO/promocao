@@ -210,16 +210,9 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
       {
         field: 'STATIVO',
         header: 'Status',
-        body: row => <th >{row.STATIVO}</th>,
+        body: row => <th style={{color: row.STATIVO === 'ATIVO' ? 'blue' : 'red', fontWeight: 'bold'}} >{row.STATIVO}</th>,
         style: { width: '10%' },
         bodyStyle: { textAlign: 'center' },
-        sortable: true,
-      },
-      {
-        field: 'TPAPARTIRDE',
-        header: 'Tipo Aplicação',
-        body: row => <th>{row.TPAPARTIRDE}</th>,
-        style: { width: '20%' },
         sortable: true,
       },
       {
@@ -238,7 +231,7 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
                 width="35px"
                 height="35px"
                 iconColor={"#fff"}
-                cor={"info"}
+                cor={"primary"}
   
               />
             </div>
