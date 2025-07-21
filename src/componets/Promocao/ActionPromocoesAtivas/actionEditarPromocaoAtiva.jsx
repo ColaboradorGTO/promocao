@@ -19,7 +19,7 @@ import { use } from "react";
 import { ActionEmpresasModalPromocao } from "./ActionEmpresasDaPromocao/actionEmpresasModalPromocao";
 import { ActionProdutoModalPromocaoSelecionado } from "./ActionProdutosDaPromocaoSelecionado/actionProdutoModalPromocaoSelecionado";
 import { ActionProdutoModalPromocaoSelecionadoDestino } from "./ActionProdutosDaPromocaoSelecionado/actionProdutoModalPromocaoSelecionaDestino";
-import { MultSelectActionAsync } from "../../Select/MultSelectActionAsync";
+
 
 
 
