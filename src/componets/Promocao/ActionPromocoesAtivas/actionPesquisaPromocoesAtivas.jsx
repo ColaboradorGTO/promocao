@@ -91,11 +91,11 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
   
    
 
-  useEffect(() => {
-    const dataAtual = getDataAtual();
-    setDataInicio(dataAtual)
-    setDataFim(dataAtual)
-  }, [])
+  // useEffect(() => {
+  //   const dataAtual = getDataAtual();
+  //   setDataInicio(dataAtual)
+  //   setDataFim(dataAtual)
+  // }, [])
 
 
   const { data: optionsModulos = [], error: errorModulos, isLoading: isLoadingModulos, refetch: refetchModulos } = useQuery(
