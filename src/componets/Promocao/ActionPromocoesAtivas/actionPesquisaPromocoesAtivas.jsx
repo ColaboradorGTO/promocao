@@ -269,6 +269,7 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
   }
 
   const options = [
+    {value: '', label: 'Selecione'},
     {value: 'True', label: 'Ativa'},
     {value: 'False', label: 'Inativa'},
   ]
