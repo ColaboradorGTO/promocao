@@ -196,14 +196,14 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
       {
         field: 'DTHORAINICIO',
         header: 'Data Início',
-        body: row => <th>{row.DTHORAINICIO}</th>,
+        body: row => <th>{dataFormatada(row.DTHORAINICIO)}</th>,
         style: { width: '20%' },
         sortable: true,
       },
       {
         field: 'DTHORAFIM',
         header: 'Data Fim',
-        body: row => <th>{row.DTHORAFIM}</th>,
+        body: row => <th>{dataFormatada(row.DTHORAFIM)}</th>,
         style: { width: '20%' },
         sortable: true,
       },
