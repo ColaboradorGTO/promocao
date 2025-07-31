@@ -60,7 +60,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
   const [modalEmpresasPromocao, setModalEmpresasPromocao] = useState(false);
   const [modalPodutoSelecionadoOrigem, setModalPodutoSelecionadoOrigem] = useState(false);
   const [modalPodutoSelecionadoDestino, setModalPodutoSelecionadoDestino] = useState(false);
-  const [dadosEmpresasPromocoes, setDadosEmpresasPromocoes] = useState([]);
+  // const [dadosEmpresasPromocoes, setDadosEmpresasPromocoes] = useState([]);
  
   const navigate = useNavigate();
 
@@ -201,6 +201,28 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     },
     { enabled: Boolean(idResumoPromocao), staleTime: 1000 * 60 * 60 }
   );
+
+  const { data: dadosEmpresasPromocoes = [], error: errorEmpresasPromocoess, isLoading: isLoadingEmpresasPromocoess, refetch: refetchEmpresasPromocoess } = useQuery(
+    ['empresa-promocoes-ativas', idResumoPromocao],
+    async () => {
+      const response = await get(`/empresa-promocoes-ativas?idResumoPromocao=${idResumoPromocao}`);
+      // setModalEmpresasPromocao(true);
+      return response.data;
+    },
+    { enabled: Boolean(idResumoPromocao), staleTime: 1000 * 60 * 60 }
+  );
+
+// const mostrarEmpresasPromocao = async () => {
+//     try {
+//       const response = await get(`/empresa-promocoes-ativas?idResumoPromocao=${idResumoPromocao}`);
+//       if (response) {
+//         setDadosEmpresasPromocoes(response.data);
+//         setModalEmpresasPromocao(true);
+//       }
+//     } catch (error) {
+//       console.error('Erro ao buscar detalhes da venda: ', error);
+//     }
+//   };
 
   useEffect(() => {
     if (marcaSelecionada) {
@@ -462,17 +484,17 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
   //   });
   // }, [optionsEmpresasPromocoes]);
 
-  const mostrarEmpresasPromocao = async () => {
-    try {
-      const response = await get(`/empresa-promocoes-ativas?idResumoPromocao=${idResumoPromocao}`);
-      if (response) {
-        setDadosEmpresasPromocoes(response.data);
-        setModalEmpresasPromocao(true);
-      }
-    } catch (error) {
-      console.error('Erro ao buscar detalhes da venda: ', error);
-    }
-  };
+  // const mostrarEmpresasPromocao = async () => {
+  //   try {
+  //     const response = await get(`/empresa-promocoes-ativas?idResumoPromocao=${idResumoPromocao}`);
+  //     if (response) {
+  //       setDadosEmpresasPromocoes(response.data);
+  //       setModalEmpresasPromocao(true);
+  //     }
+  //   } catch (error) {
+  //     console.error('Erro ao buscar detalhes da venda: ', error);
+  //   }
+  // };
   
 
   const mostrarProdutosPromocao = useCallback(() => {
@@ -1232,7 +1254,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     optionsEmpresasPromocoes,
     handleSalvarMecanica,
     optionsStatus,
-    mostrarEmpresasPromocao,
+    // mostrarEmpresasPromocao,
     mostrarProdutosPromocao,
     handlePesquisarProdutoDestino,
     handlePesquisarProdutoOrigem,
@@ -1264,7 +1286,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     modalEmpresasPromocao,
     setModalEmpresasPromocao,
     dadosEmpresasPromocoes,
-    setDadosEmpresasPromocoes,
+    // setDadosEmpresasPromocoes,
     mostrarProdutosSelecionadosOrigem,
     mostrarProdutosSelecionadosDestino,
     refetchEmpresasPromocoes,

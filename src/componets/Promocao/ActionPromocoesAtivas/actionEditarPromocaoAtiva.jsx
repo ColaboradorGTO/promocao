@@ -96,7 +96,7 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
     onSubmit,
     optionsEmpresasPromocoes,
     optionsStatus,
-    mostrarEmpresasPromocao,
+    // mostrarEmpresasPromocao,
     mostrarProdutosPromocao,
     handlePesquisarProdutoDestino,
     handlePesquisarProdutoOrigem,
@@ -463,7 +463,8 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir })
         ButtonTypeEmpresa={ButtonType}
         linkNomeEmpresa={"Visualizar Empresas"}
         onButtonClickEmpresa={() => {
-          mostrarEmpresasPromocao()
+          // mostrarEmpresasPromocao()
+          setModalEmpresasPromocao(true);
         }}
         corEmpresa={"primary"}
         IconEmpresa={GrView}
