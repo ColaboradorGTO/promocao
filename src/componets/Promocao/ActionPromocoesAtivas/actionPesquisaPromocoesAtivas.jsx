@@ -25,6 +25,7 @@ import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import HeaderTable from "../../Tables/headerTable";
 import { ActionListaPesquisaProdutosDestino } from "./actionListaPesquisaProdutosDestino";
+import { ActionListaPesquisaProdutosOrigem } from "./actionListaPesquisaProdutosOrigem";
 // import { useUpdatePromocaoAtivaStatus } from "./hook/useUpdatePromocaoStatus";
 
 
@@ -137,6 +138,50 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
       enabled: false, staleTime: 5 * 60 * 1000,
     }
   );
+
+  const fetchListaProdutosPromocaoOrigem = async () => {
+    try {
+      const urlApi = `/produto-promocao-origem?dsProduto=${produtoOrigem}`;
+      const response = await get(urlApi);
+      if (response.data.length && response.data.length === pageSize) {
+        let allData = [...response.data];
+        animacaoCarregamento(`Carregando... Página ${currentPage} de ${response.page}`, true);
+        async function fetchNextPage(currentPage) {
+          try {
+            currentPage++;
+            const responseNextPage = await get(`${urlApi}&page=${currentPage}`);
+            if (responseNextPage.data.length) {
+              allData.push(...responseNextPage.data);
+              return fetchNextPage(currentPage);
+            } else {
+              return allData;
+            }
+          } catch (error) {
+            console.error('Erro ao buscar próxima página:', error);
+            throw error;
+          }
+        }
+        await fetchNextPage(currentPage);
+        return allData;
+      } else {
+        return response.data;
+      }
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+      throw error;
+    } finally {
+      fecharAnimacaoCarregamento();
+    }
+  };
+
+  const { data: dadosListaProdutoOrigem = [], error: errorProdutoOrigem, isLoading: isLoadingProdutoOrigem, refetch: refetchListaProdutosOrigem } = useQuery(
+    ['produto-promocao-origem'],
+    () => fetchListaProdutosPromocaoOrigem(produtoOrigem),
+    {
+      enabled: false, staleTime: 5 * 60 * 1000,
+    }
+  );
+
 
   const fetchListaProdutosPromocao = async () => {
     try {
@@ -310,6 +355,9 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
     refetchListaProdutosDestino()
   }
 
+  const handleClickProdutoOrigem = () => {
+    refetchListaProdutosOrigem()
+  }
   const options = [
     { value: '', label: 'Selecione' },
     { value: 'True', label: 'Ativa' },
@@ -374,7 +422,7 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
 
             ButtonTypeCancelar={ButtonType}
             linkCancelar={"Pesquisar Produtos Origem"}
-            onButtonClickCancelar={() => console.log('')}
+            onButtonClickCancelar={handleClickProdutoOrigem}
             IconCancelar={AiOutlineSearch}
             corCancelar={"danger"}
 
@@ -382,6 +430,8 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
 
           <ActionListaPesquisaProdutosDestino dadosListaProdutoDestino={dadosListaProdutoDestino} />
 
+          <ActionListaPesquisaProdutosOrigem dadosListaProdutoOrigem={dadosListaProdutoOrigem} />
+          
           {/* <div className="card">
             <ActionListaPromocoesAtivas 
               dadosListaPromocao={dadosListaPromocao} 
