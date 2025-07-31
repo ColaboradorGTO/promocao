@@ -33,7 +33,8 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
   const [tabelaCampanha, setTabelaCampanha] = useState(true);
   const [actionPromocaoAtiva, setActionPromocaoAtiva] = useState(true);
   const [actionCadastrarPromocao, setActionCadastrarPromocao] = useState(false);
-  const [tabelaProduto, setTabelaProduto] = useState(false);
+  const [tabelaProdutoDestino, setTabelaProdutoDestino] = useState(false);
+  const [tabelaProdutoOrigem, setTabelaProdutoOrigem] = useState(false);
   const [isQueryData, setIsQueryData] = useState(false)
   const [statusSelecionado, setstatusSelecionado] = useState('')
   const [dataInicio, setDataInicio] = useState('')
@@ -353,10 +354,16 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
 
   const handleClickProdutoDestino = () => {
     refetchListaProdutosDestino()
+    setTabelaProdutoDestino(true)
+    setTabelaProdutoOrigem(false)
+    setTabelaCampanha(false)
   }
 
   const handleClickProdutoOrigem = () => {
     refetchListaProdutosOrigem()
+    setTabelaProdutoOrigem(true)
+    setTabelaProdutoDestino(false)
+    setTabelaCampanha(false)
   }
   const options = [
     { value: '', label: 'Selecione' },
@@ -384,18 +391,18 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
             valueInputFieldDTFimA={dataFim}
             onChangeInputFieldDTFimA={(e) => setDataFim(e.target.value)}
 
-            InputFieldCodBarraComponent={InputField}
-            labelInputFieldCodBarra={"Pesquisar Produtos de Origem na Promoção"}
-            placeHolderInputFieldCodBarra={"Digite o produto origem"}
-            valueInputFieldCodBarra={produtoOrigem}
-            onChangeInputFieldCodBarra={(e) => setProdutoOrigem(e.target.value)}
+            // InputFieldCodBarraComponent={InputField}
+            // labelInputFieldCodBarra={"Pesquisar Produtos de Origem na Promoção"}
+            // placeHolderInputFieldCodBarra={"Digite o produto origem"}
+            // valueInputFieldCodBarra={produtoOrigem}
+            // onChangeInputFieldCodBarra={(e) => setProdutoOrigem(e.target.value)}
 
 
-            InputFieldComponent={InputField}
-            labelInputField={"Pesquisar Produtos de Destino na Promoção"}
-            placeHolderInputFieldComponent={"Digite o produto destino"}
-            valueInputField={produtoDestino}
-            onChangeInputField={(e) => setProdutoDestino(e.target.value)}
+            // InputFieldComponent={InputField}
+            // labelInputField={"Pesquisar Produtos de Destino na Promoção"}
+            // placeHolderInputFieldComponent={"Digite o produto destino"}
+            // valueInputField={produtoDestino}
+            // onChangeInputField={(e) => setProdutoDestino(e.target.value)}
 
             InputSelectEmpresaComponent={InputSelectAction}
             onChangeSelectEmpresa={(e) => setstatusSelecionado(e.value)}
@@ -414,24 +421,28 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
             corSearch={"primary"}
             IconSearch={AiOutlineSearch}
 
-            ButtonTypeCadastro={ButtonType}
-            linkNome={"Pesquisar Produtos Destino"}
-            onButtonClickCadastro={handleClickProdutoDestino}
-            IconCadastro={AiOutlineSearch}
-            corCadastro={"success"}
+            // ButtonTypeCadastro={ButtonType}
+            // linkNome={"Pesquisar Produtos Destino"}
+            // onButtonClickCadastro={handleClickProdutoDestino}
+            // IconCadastro={AiOutlineSearch}
+            // corCadastro={"success"}
 
-            ButtonTypeCancelar={ButtonType}
-            linkCancelar={"Pesquisar Produtos Origem"}
-            onButtonClickCancelar={handleClickProdutoOrigem}
-            IconCancelar={AiOutlineSearch}
-            corCancelar={"danger"}
+            // ButtonTypeCancelar={ButtonType}
+            // linkCancelar={"Pesquisar Produtos Origem"}
+            // onButtonClickCancelar={handleClickProdutoOrigem}
+            // IconCancelar={AiOutlineSearch}
+            // corCancelar={"danger"}
 
           />
+          {tabelaProdutoDestino && (
 
           <ActionListaPesquisaProdutosDestino dadosListaProdutoDestino={dadosListaProdutoDestino} />
+          )}
 
-          <ActionListaPesquisaProdutosOrigem dadosListaProdutoOrigem={dadosListaProdutoOrigem} />
-          
+          {tabelaProdutoOrigem && (
+            <ActionListaPesquisaProdutosOrigem dadosListaProdutoOrigem={dadosListaProdutoOrigem} />
+          )}
+
           {/* <div className="card">
             <ActionListaPromocoesAtivas 
               dadosListaPromocao={dadosListaPromocao} 

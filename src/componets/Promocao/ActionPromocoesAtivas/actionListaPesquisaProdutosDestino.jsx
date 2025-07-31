@@ -191,12 +191,12 @@ export const ActionListaPesquisaProdutosDestino = ({
             globalFilter={globalFilterValue}
             sortOrder={-1}
             paginator={true}
-            rows={100}
-            // rowsPerPageOptions={[10, 20, 50, 100, dados.length]}
+            rows={10}
+            rowsPerPageOptions={[10, 20, 50, 100, 200, 300, 400, 500, dados.length]}
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Registros"
             filterDisplay="menu"
-            className="custom-swal"
+      
             showGridlines
             stripedRows
             emptyMessage={
