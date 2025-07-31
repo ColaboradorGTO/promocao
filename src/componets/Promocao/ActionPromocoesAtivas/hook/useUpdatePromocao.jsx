@@ -587,87 +587,87 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
   // }, [fileProdutoDestino, produtoDestino]);
 
   
-    const handlePesquisarProdutoOrigem = useCallback(async (tipo) => {
-      const produtosOrigem = fileProdutoOrigem && fileProdutoOrigem.length > 0 ? JSON.parse(fileProdutoOrigem) : produtoOrigem ? [produtoOrigem] : [];
-      const produtoOrigemArray = Array.isArray(produtosOrigem) ? produtosOrigem : [produtosOrigem];
-      const termoPesquisa = produtoOrigemArray[0] || "";
-  
-      const { value: tipoPesquisa } = await Swal.fire({
-        title: 'Como deseja pesquisar o produto?',
-        input: 'radio',
-        inputOptions: {
-          idProduto: 'ID Produto',
-          codBarras: 'Código de Barras',
-          dsProduto: 'Descrição do Produto'
-        },
-        inputValidator: (value) => {
-          if (!value) {
-            return 'Selecione uma opção!';
-          }
-        },
-        confirmButtonText: 'Pesquisar',
-        showCancelButton: true,
-        customClass: { container: 'custom-swal' }
-      });
-  
-      if (!tipoPesquisa) return;
-  
-      let response;
-      if (tipoPesquisa === 'idProduto') {
-        response = await get(`/produto-promocao-ativa?idProduto=${termoPesquisa}`);
-      } else if (tipoPesquisa === 'codBarras') {
-        response = await get(`/produto-promocao-ativa?codBarras=${termoPesquisa}`);
-      } else if (tipoPesquisa === 'dsProduto') {
-        response = await get(`/produto-promocao-ativa?dsProduto=${termoPesquisa}`);
-      }
-  
-      setDadosProdutosPesquisa(response?.data || []);
-      setModalProdutoOrigem(true);
-    }, [fileProdutoOrigem, produtoOrigem]);
-  
-    const handlePesquisarProdutoDestino = useCallback(async (tipo) => {
-      const produtosDestino = fileProdutoDestino && fileProdutoDestino.length > 0 ? JSON.parse(fileProdutoDestino) : produtoDestino ? [produtoDestino] : [];
-      const produtoDestinoArray = Array.isArray(produtosDestino) ? produtosDestino : [produtosDestino];
-      const termoPesquisa = produtoDestinoArray[0] || "";
-  
-      if (!termoPesquisa) {
-        setDadosProdutosPesquisa([]);
-        setModalProdutoDestino(true);
-        return;
-      }
-  
-      const { value: tipoPesquisa } = await Swal.fire({
-        title: 'Como deseja pesquisar o produto?',
-        input: 'radio',
-        inputOptions: {
-          idProduto: 'ID Produto',
-          codBarras: 'Código de Barras',
-          dsProduto: 'Descrição do Produto'
-        },
-        inputValidator: (value) => {
-          if (!value) {
-            return 'Selecione uma opção!';
-          }
-        },
-        confirmButtonText: 'Pesquisar',
-        showCancelButton: true,
-        customClass: { container: 'custom-swal' }
-      });
-  
-      if (!tipoPesquisa) return;
-  
-      let response;
-      if (tipoPesquisa === 'idProduto') {
-        response = await get(`/produto-promocao-ativa?idProduto=${termoPesquisa}`);
-      } else if (tipoPesquisa === 'codBarras') {
-        response = await get(`/produto-promocao-ativa?codBarras=${termoPesquisa}`);
-      } else if (tipoPesquisa === 'dsProduto') {
-        response = await get(`/produto-promocao-ativa?dsProduto=${termoPesquisa}`);
-      }
-  
-      setDadosProdutosPesquisa(response?.data || []);
+  const handlePesquisarProdutoOrigem = useCallback(async (tipo) => {
+    const produtosOrigem = fileProdutoOrigem && fileProdutoOrigem.length > 0 ? JSON.parse(fileProdutoOrigem) : produtoOrigem ? [produtoOrigem] : [];
+    const produtoOrigemArray = Array.isArray(produtosOrigem) ? produtosOrigem : [produtosOrigem];
+    const termoPesquisa = produtoOrigemArray[0] || "";
+
+    const { value: tipoPesquisa } = await Swal.fire({
+      title: 'Como deseja pesquisar o produto?',
+      input: 'radio',
+      inputOptions: {
+        idProduto: 'ID Produto',
+        codBarras: 'Código de Barras',
+        dsProduto: 'Descrição do Produto'
+      },
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Selecione uma opção!';
+        }
+      },
+      confirmButtonText: 'Pesquisar',
+      showCancelButton: true,
+      customClass: { container: 'custom-swal' }
+    });
+
+    if (!tipoPesquisa) return;
+
+    let response;
+    if (tipoPesquisa === 'idProduto') {
+      response = await get(`/produto-promocao-ativa?idProduto=${termoPesquisa}`);
+    } else if (tipoPesquisa === 'codBarras') {
+      response = await get(`/produto-promocao-ativa?codBarras=${termoPesquisa}`);
+    } else if (tipoPesquisa === 'dsProduto') {
+      response = await get(`/produto-promocao-ativa?dsProduto=${termoPesquisa}`);
+    }
+
+    setDadosProdutosPesquisa(response?.data || []);
+    setModalProdutoOrigem(true);
+  }, [fileProdutoOrigem, produtoOrigem]);
+
+  const handlePesquisarProdutoDestino = useCallback(async (tipo) => {
+    const produtosDestino = fileProdutoDestino && fileProdutoDestino.length > 0 ? JSON.parse(fileProdutoDestino) : produtoDestino ? [produtoDestino] : [];
+    const produtoDestinoArray = Array.isArray(produtosDestino) ? produtosDestino : [produtosDestino];
+    const termoPesquisa = produtoDestinoArray[0] || "";
+
+    if (!termoPesquisa) {
+      setDadosProdutosPesquisa([]);
       setModalProdutoDestino(true);
-    }, [fileProdutoDestino, produtoDestino]);
+      return;
+    }
+
+    const { value: tipoPesquisa } = await Swal.fire({
+      title: 'Como deseja pesquisar o produto?',
+      input: 'radio',
+      inputOptions: {
+        idProduto: 'ID Produto',
+        codBarras: 'Código de Barras',
+        dsProduto: 'Descrição do Produto'
+      },
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Selecione uma opção!';
+        }
+      },
+      confirmButtonText: 'Pesquisar',
+      showCancelButton: true,
+      customClass: { container: 'custom-swal' }
+    });
+
+    if (!tipoPesquisa) return;
+
+    let response;
+    if (tipoPesquisa === 'idProduto') {
+      response = await get(`/produto-promocao-ativa?idProduto=${termoPesquisa}`);
+    } else if (tipoPesquisa === 'codBarras') {
+      response = await get(`/produto-promocao-ativa?codBarras=${termoPesquisa}`);
+    } else if (tipoPesquisa === 'dsProduto') {
+      response = await get(`/produto-promocao-ativa?dsProduto=${termoPesquisa}`);
+    }
+
+    setDadosProdutosPesquisa(response?.data || []);
+    setModalProdutoDestino(true);
+  }, [fileProdutoDestino, produtoDestino]);
 
   const empresasFiltradas = useMemo(() => {
     const empresasArray = Array.isArray(optionsEmpresas) ? optionsEmpresas : [];

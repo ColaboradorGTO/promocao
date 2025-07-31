@@ -27,7 +27,7 @@ import HeaderTable from "../../Tables/headerTable";
 // import { useUpdatePromocaoAtivaStatus } from "./hook/useUpdatePromocaoStatus";
 
 
-export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
+export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
   const [tabelaCampanha, setTabelaCampanha] = useState(true);
   const [actionPromocaoAtiva, setActionPromocaoAtiva] = useState(true);
   const [actionCadastrarPromocao, setActionCadastrarPromocao] = useState(false);
@@ -43,80 +43,62 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
   const [modalVisivel, setModalVisivel] = useState(false);
   const [tabelaVisivel, setTabelaVisivel] = useState(true);
   const [dadosPromocao, setDadosPromocao] = useState([]);
+  const [produtoOrigem, setProdutoOrigem] = useState('');
+  const [produtoDestino, setProdutoDestino] = useState('');
   const dataTableRef = useRef();
-  
-  
-    const onGlobalFilterChange = (e) => {
-      setGlobalFilterValue(e.target.value);
-    };
-  
-    const handlePrint = useReactToPrint({
-      content: () => dataTableRef.current,
-      documentTitle: 'Promoções Ativas',
+
+
+  const onGlobalFilterChange = (e) => {
+    setGlobalFilterValue(e.target.value);
+  };
+
+  const handlePrint = useReactToPrint({
+    content: () => dataTableRef.current,
+    documentTitle: 'Promoções Ativas',
+  });
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.autoTable({
+      head: [['ID', , 'Descrição', 'Vr Preço Produto', 'Data Início', 'Data Fim']],
+      body: dados.map(item => [
+        item.IDRESUMOPROMOCAOMARKETING,
+        item.DSPROMOCAOMARKETING,
+        formatMoeda(item.VLPRECOPRODUTO),
+        dataHoraFormatada(item.DTHORAINICIO),
+        dataHoraFormatada(item.DTHORAFIM),
+      ]),
+      horizontalPageBreak: true,
+      horizontalPageBreakBehaviour: 'immediately'
     });
-  
-    const exportToPDF = () => {
-      const doc = new jsPDF();
-      doc.autoTable({
-        head: [['ID', , 'Descrição', 'Vr Preço Produto', 'Data Início', 'Data Fim']],
-        body: dados.map(item => [
-          item.IDRESUMOPROMOCAOMARKETING,
-          item.DSPROMOCAOMARKETING,
-          formatMoeda(item.VLPRECOPRODUTO),
-          dataHoraFormatada(item.DTHORAINICIO),
-          dataHoraFormatada(item.DTHORAFIM),
-        ]),
-        horizontalPageBreak: true,
-        horizontalPageBreakBehaviour: 'immediately'
-      });
-      doc.save('promocoes_ativas.pdf');
-    };
-  
-    const exportToExcel = () => {
-      const worksheet = XLSX.utils.json_to_sheet(dados);
-      const workbook = XLSX.utils.book_new();
-      const header = ['ID', 'Descrição', 'Vr Preço Produto', 'Data Início', 'Data Fim'];
-      worksheet['!cols'] = [
-        { wpx: 100, caption: 'ID Produto' },
-        { wpx: 200, caption: 'Descrição' },
-        { wpx: 100, caption: 'Vr Preço Produto' },
-        { wpx: 100, caption: 'Data Início' },
-        { wpx: 100, caption: 'Data Fim' },
-      ];
-      XLSX.utils.sheet_add_aoa(worksheet, [header], { origin: 'A1' });
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Promoções Ativas');
-      XLSX.writeFile(workbook, 'promocoes_ativas.xlsx');
-    };
-  
-  
-  
-   
+    doc.save('promocoes_ativas.pdf');
+  };
 
-  // useEffect(() => {
-  //   const dataAtual = getDataAtual();
-  //   setDataInicio(dataAtual)
-  //   setDataFim(dataAtual)
-  // }, [])
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(dados);
+    const workbook = XLSX.utils.book_new();
+    const header = ['ID', 'Descrição', 'Vr Preço Produto', 'Data Início', 'Data Fim'];
+    worksheet['!cols'] = [
+      { wpx: 100, caption: 'ID Produto' },
+      { wpx: 200, caption: 'Descrição' },
+      { wpx: 100, caption: 'Vr Preço Produto' },
+      { wpx: 100, caption: 'Data Início' },
+      { wpx: 100, caption: 'Data Fim' },
+    ];
+    XLSX.utils.sheet_add_aoa(worksheet, [header], { origin: 'A1' });
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Promoções Ativas');
+    XLSX.writeFile(workbook, 'promocoes_ativas.xlsx');
+  };
 
-
-  const { data: optionsModulos = [], error: errorModulos, isLoading: isLoadingModulos, refetch: refetchModulos } = useQuery(
-    'menus-usuario-excecao',
-    async () => {
-      const response = await get(`/menus-usuario-excecao?idUsuario=${usuarioLogado?.id}&idMenuFilho=${ID}`);
-      return response.data;
-    },
-    { enabled: Boolean(usuarioLogado?.id), staleTime: 60 * 60 * 1000,}
-  );
-
-  const fetchListaProdutosPromocao = async () => {
-    try {
-      const urlApi = `/promocoes-ativas?dataPesquisaInicio=${dataInicio}&dataPesquisaFim=${dataFim}&status=${statusSelecionado}`;
+ const fetchListaProdutosPromocaoDestino = async () => {
+      try {
+      const urlApi = `/produto-promocao-destino?dsProduto=${produtoDestino}`;
       const response = await get(urlApi);
-      
+
       if (response.data.length && response.data.length === pageSize) {
         let allData = [...response.data];
         animacaoCarregamento(`Carregando... Página ${currentPage} de ${response.page}`, true);
-  
+
         async function fetchNextPage(currentPage) {
           try {
             currentPage++;
@@ -132,11 +114,58 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
             throw error;
           }
         }
-  
+
         await fetchNextPage(currentPage);
         return allData;
       } else {
-       
+
+        return response.data;
+      }
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+      throw error;
+    } finally {
+      fecharAnimacaoCarregamento();
+    }
+ }
+
+ const { data: dadosListaProdutoDestino = [], error: errorProdutoDestino, isLoading: isLoadingProdutoDestino, refetch: refetchListaProdutosDestino } = useQuery(
+    ['produto-promocao-destino'],
+    () => fetchListaProdutosPromocaoDestino(produtoDestino),
+    {
+      enabled: Boolean(produtoDestino), staleTime: 5 * 60 * 1000,
+    }
+  );
+
+  const fetchListaProdutosPromocao = async () => {
+    try {
+      const urlApi = `/promocoes-ativas?dataPesquisaInicio=${dataInicio}&dataPesquisaFim=${dataFim}&status=${statusSelecionado}`;
+      const response = await get(urlApi);
+
+      if (response.data.length && response.data.length === pageSize) {
+        let allData = [...response.data];
+        animacaoCarregamento(`Carregando... Página ${currentPage} de ${response.page}`, true);
+
+        async function fetchNextPage(currentPage) {
+          try {
+            currentPage++;
+            const responseNextPage = await get(`${urlApi}&page=${currentPage}`);
+            if (responseNextPage.data.length) {
+              allData.push(...responseNextPage.data);
+              return fetchNextPage(currentPage);
+            } else {
+              return allData;
+            }
+          } catch (error) {
+            console.error('Erro ao buscar próxima página:', error);
+            throw error;
+          }
+        }
+
+        await fetchNextPage(currentPage);
+        return allData;
+      } else {
+
         return response.data;
       }
     } catch (error) {
@@ -151,7 +180,7 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
     ['promocoes-ativas'],
     () => fetchListaProdutosPromocao(dataInicio, dataFim, currentPage, pageSize),
     {
-      enabled: Boolean(isQueryData), staleTime: 5 * 60 * 1000, 
+      enabled: Boolean(isQueryData), staleTime: 5 * 60 * 1000,
     }
   );
 
@@ -161,95 +190,95 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
   // } = useUpdatePromocaoAtivaStatus({
   //   dadosListaPromocao
   // })
-  
-   const dados = dadosListaPromocao?.map((item, index) => {
-      let contador = index + 1;
-      return {
-        contador,
-        IDRESUMOPROMOCAOMARKETING: item.IDRESUMOPROMOCAOMARKETING,
-        DSPROMOCAOMARKETING: item.DSPROMOCAOMARKETING,
-        DTHORAINICIO: item.DTHORAINICIO,
-        DTHORAFIM: item.DTHORAFIM,
-        TPAPLICADOA: item.TPAPLICADOA,
-        APARTIRDEQTD: item.APARTIRDEQTD,
-        APARTIRDOVLR: item.APARTIRDOVLR,
-        TPFATORPROMO: item.TPFATORPROMO,
-        FATORPROMOVLR: item.FATORPROMOVLR,
-        FATORPROMOPERC: item.FATORPROMOPERC,
-        TPAPARTIRDE: item.TPAPARTIRDE,
-        VLPRECOPRODUTO: formatMoeda(item.VLPRECOPRODUTO),
-        STEMPRESAPROMO: item.STEMPRESAPROMO,
-        STDETPROMOORIGEM: item.STDETPROMOORIGEM,
-        STDETPROMODESTINO: item.STDETPROMODESTINO,
-        STATIVO: item.STATIVO === 'True' ? 'ATIVO' : 'INATIVO',
-      }
-    });
-  
-    const colunasListaPromocao = [
-      {
-        field: 'IDRESUMOPROMOCAOMARKETING',
-        header: 'ID',
-        body: row => <th>{row.IDRESUMOPROMOCAOMARKETING}</th>,
-        style: { width: '10%' },
-        sortable: true,
+
+  const dados = dadosListaPromocao?.map((item, index) => {
+    let contador = index + 1;
+    return {
+      contador,
+      IDRESUMOPROMOCAOMARKETING: item.IDRESUMOPROMOCAOMARKETING,
+      DSPROMOCAOMARKETING: item.DSPROMOCAOMARKETING,
+      DTHORAINICIO: item.DTHORAINICIO,
+      DTHORAFIM: item.DTHORAFIM,
+      TPAPLICADOA: item.TPAPLICADOA,
+      APARTIRDEQTD: item.APARTIRDEQTD,
+      APARTIRDOVLR: item.APARTIRDOVLR,
+      TPFATORPROMO: item.TPFATORPROMO,
+      FATORPROMOVLR: item.FATORPROMOVLR,
+      FATORPROMOPERC: item.FATORPROMOPERC,
+      TPAPARTIRDE: item.TPAPARTIRDE,
+      VLPRECOPRODUTO: formatMoeda(item.VLPRECOPRODUTO),
+      STEMPRESAPROMO: item.STEMPRESAPROMO,
+      STDETPROMOORIGEM: item.STDETPROMOORIGEM,
+      STDETPROMODESTINO: item.STDETPROMODESTINO,
+      STATIVO: item.STATIVO === 'True' ? 'ATIVO' : 'INATIVO',
+    }
+  });
+
+  const colunasListaPromocao = [
+    {
+      field: 'IDRESUMOPROMOCAOMARKETING',
+      header: 'ID',
+      body: row => <th>{row.IDRESUMOPROMOCAOMARKETING}</th>,
+      style: { width: '10%' },
+      sortable: true,
+    },
+    {
+      field: 'DSPROMOCAOMARKETING',
+      header: 'Descrição',
+      body: row => <th>{row.DSPROMOCAOMARKETING}</th>,
+      style: { width: '30%' },
+      sortable: true,
+    },
+
+    {
+      field: 'DTHORAINICIO',
+      header: 'Data Início',
+      body: row => <th>{dataFormatada(row.DTHORAINICIO)}</th>,
+      style: { width: '20%' },
+      sortable: true,
+    },
+    {
+      field: 'DTHORAFIM',
+      header: 'Data Fim',
+      body: row => <th>{dataFormatada(row.DTHORAFIM)}</th>,
+      style: { width: '20%' },
+      sortable: true,
+    },
+    {
+      field: 'STATIVO',
+      header: 'Status',
+      body: row => <th style={{ color: row.STATIVO === 'ATIVO' ? 'blue' : 'red', fontWeight: 'bold' }} >{row.STATIVO}</th>,
+      style: { width: '10%' },
+      bodyStyle: { textAlign: 'center' },
+      sortable: true,
+    },
+    {
+      field: 'IDRESUMOPROMOCAOMARKETING',
+      header: 'Opções',
+      width: "15%",
+      body: row => {
+
+        return (
+          <div >
+            <ButtonTable
+              titleButton={"Editar "}
+              onClickButton={() => handleEdit(row)}
+              Icon={CiEdit}
+              iconSize={25}
+              width="35px"
+              height="35px"
+              iconColor={"#fff"}
+              cor={"primary"}
+
+            />
+          </div>
+        )
       },
-      {
-        field: 'DSPROMOCAOMARKETING',
-        header: 'Descrição',
-        body: row => <th>{row.DSPROMOCAOMARKETING}</th>,
-        style: { width: '30%' },
-        sortable: true,
-      },
-    
-      {
-        field: 'DTHORAINICIO',
-        header: 'Data Início',
-        body: row => <th>{dataFormatada(row.DTHORAINICIO)}</th>,
-        style: { width: '20%' },
-        sortable: true,
-      },
-      {
-        field: 'DTHORAFIM',
-        header: 'Data Fim',
-        body: row => <th>{dataFormatada(row.DTHORAFIM)}</th>,
-        style: { width: '20%' },
-        sortable: true,
-      },
-      {
-        field: 'STATIVO',
-        header: 'Status',
-        body: row => <th style={{color: row.STATIVO === 'ATIVO' ? 'blue' : 'red', fontWeight: 'bold'}} >{row.STATIVO}</th>,
-        style: { width: '10%' },
-        bodyStyle: { textAlign: 'center' },
-        sortable: true,
-      },
-      {
-        field: 'IDRESUMOPROMOCAOMARKETING',
-        header: 'Opções',
-        width: "15%",
-        body: row => {
-  
-          return (
-            <div >
-              <ButtonTable
-                titleButton={"Editar "}
-                onClickButton={() => handleEdit(row)}
-                Icon={CiEdit}
-                iconSize={25}
-                width="35px"
-                height="35px"
-                iconColor={"#fff"}
-                cor={"primary"}
-  
-              />
-            </div>
-          )
-        },
-        sortable: true,
-      },
-    ]
-  
-  
+      sortable: true,
+    },
+  ]
+
+
   const handleEdit = async (row) => {
     try {
       const response = await get(`/promocoes-ativas?idResumoPromocao=${row.IDRESUMOPROMOCAOMARKETING}`);
@@ -272,14 +301,14 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
   const handleClickProduto = () => {
     setIsQueryData(true)
     setCurrentPage(prevPage => prevPage + 1);
-    refetchListaProdutos() 
-    setTabelaCampanha(true)    
+    refetchListaProdutos()
+    setTabelaCampanha(true)
   }
 
   const options = [
-    {value: '', label: 'Selecione'},
-    {value: 'True', label: 'Ativa'},
-    {value: 'False', label: 'Inativa'},
+    { value: '', label: 'Selecione' },
+    { value: 'True', label: 'Ativa' },
+    { value: 'False', label: 'Inativa' },
   ]
   return (
 
@@ -287,38 +316,51 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
 
       {actionPromocaoAtiva && (
         <>
-        <ActionMain
-          linkComponentAnterior={["Home"]}
-          linkComponent={["Promoções Ativas"]}
-          title="Lista de Promoções Ativas"
-          
-          InputFieldDTInicioAComponent={InputField}
-          labelInputDTInicioA={"Data Início"}  
-          valueInputFieldDTInicioA={dataInicio}
-          onChangeInputFieldDTInicioA={(e) => setDataInicio(e.target.value)}
-          
-          InputFieldDTFimAComponent={InputField}
-          labelInputDTFimA={"Data Fim"}
-          valueInputFieldDTFimA={dataFim}
-          onChangeInputFieldDTFimA={(e) => setDataFim(e.target.value)}
-          
-          InputSelectEmpresaComponent={InputSelectAction}
-          onChangeSelectEmpresa={(e) => setstatusSelecionado(e.value)}
-          valueSelectEmpresa={statusSelecionado}
-          optionsEmpresas={[
-            ...options.map((item) => ({
-              value: item.value,
-              label: item.label,
-            }))
-          ]}
-          labelSelectEmpresa={"Status da Promoção"}
+          <ActionMain
+            linkComponentAnterior={["Home"]}
+            linkComponent={["Promoções Ativas"]}
+            title="Lista de Promoções Ativas"
+
+            InputFieldDTInicioAComponent={InputField}
+            labelInputDTInicioA={"Data Início"}
+            valueInputFieldDTInicioA={dataInicio}
+            onChangeInputFieldDTInicioA={(e) => setDataInicio(e.target.value)}
+
+            InputFieldDTFimAComponent={InputField}
+            labelInputDTFimA={"Data Fim"}
+            valueInputFieldDTFimA={dataFim}
+            onChangeInputFieldDTFimA={(e) => setDataFim(e.target.value)}
+
+            InputFieldCodBarraComponent={InputField}
+            labelInputFieldCodBarra={"Pesquisar Produto Origem"}
+            placeHolderInputFieldCodBarra={"Digite o produto origem"}
+            valueInputFieldCodBarra={produtoOrigem}
+            onChangeInputFieldCodBarra={(e) => setProdutoOrigem(e.target.value)}
+
+
+            InputFieldComponent={InputField}
+            labelInputField={"Pesquisar Produto Destino"}
+            placeHolderInputFieldComponent={"Digite o produto destino"}
+            valueInputField={produtoDestino}
+            onChangeInputField={(e) => setProdutoDestino(e.target.value)}
+
+            InputSelectEmpresaComponent={InputSelectAction}
+            onChangeSelectEmpresa={(e) => setstatusSelecionado(e.value)}
+            valueSelectEmpresa={statusSelecionado}
+            optionsEmpresas={[
+              ...options.map((item) => ({
+                value: item.value,
+                label: item.label,
+              }))
+            ]}
+            labelSelectEmpresa={"Status da Promoção"}
 
             ButtonSearchComponent={ButtonType}
             linkNomeSearch={"Pesquisar"}
             onButtonClickSearch={handleClickProduto}
             corSearch={"primary"}
             IconSearch={AiOutlineSearch}
-            
+
             ButtonTypeCadastro={ButtonType}
             linkNome={"Pesquisar Produtos Destino"}
             onButtonClickCadastro
@@ -334,7 +376,7 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
           />
 
 
-       
+
           {/* <div className="card">
             <ActionListaPromocoesAtivas 
               dadosListaPromocao={dadosListaPromocao} 
@@ -344,7 +386,7 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
               setActionPromocaoAtiva={setActionPromocaoAtiva}
             />
           </div> */}
-        
+
           <div className="panel">
             <div className="panel-hdr mb-4">
               <h2>Lista de Promoções</h2>
@@ -383,13 +425,6 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
                   <Column
                     key={index}
                     {...coluna}
-                    // key={coluna.field || 'selection'}
-                    // field={coluna.field}
-                    // header={coluna.header}
-                    // // selectionMode={coluna.selectionMode}
-                    // body={coluna.body}
-                    // footer={coluna.footer}
-                    // sortable={coluna.sortable}
                     headerStyle={{ color: 'white', backgroundColor: "#7a59ad", border: '1px solid #e9e9e9', fontSize: '1rem' }}
                     footerStyle={{ color: '#212529', backgroundColor: "#e9e9e9", border: '1px solid #ccc', fontSize: '1rem' }}
                     bodyStyle={{ fontSize: '1rem', border: '1px solid #e9e9e9' }}
