@@ -24,6 +24,7 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import HeaderTable from "../../Tables/headerTable";
+import { useUpdatePromocaoAtivaStatus } from "./hook/useUpdatePromocaoStatus";
 
 
 export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
@@ -153,6 +154,13 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
       enabled: Boolean(isQueryData), staleTime: 5 * 60 * 1000, 
     }
   );
+
+  const {
+    verificarPromocaoExpirada,
+    desativarPromocao
+  } = useUpdatePromocaoAtivaStatus({
+    dadosListaPromocao
+  })
   
    const dados = dadosListaPromocao?.map((item, index) => {
       let contador = index + 1;
