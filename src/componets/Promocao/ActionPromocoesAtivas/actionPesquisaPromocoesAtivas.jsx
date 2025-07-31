@@ -155,12 +155,12 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
     }
   );
 
-  const {
-    verificarPromocaoExpirada,
-    desativarPromocao
-  } = useUpdatePromocaoAtivaStatus({
-    dadosListaPromocao
-  })
+  // const {
+  //   verificarPromocaoExpirada,
+  //   desativarPromocao
+  // } = useUpdatePromocaoAtivaStatus({
+  //   dadosListaPromocao
+  // })
   
    const dados = dadosListaPromocao?.map((item, index) => {
       let contador = index + 1;
