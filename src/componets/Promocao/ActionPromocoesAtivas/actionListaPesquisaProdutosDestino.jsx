@@ -9,7 +9,7 @@ import HeaderTable from "../../../Tables/headerTable";
 
 
 export const ActionListaPesquisaProdutosDestino = ({ 
-  dadosProdutosPesquisa,
+  dadosListaProdutoDestino,
   novoProdutoDestino,
   setNovoProdutoDestino,
 }) => {
@@ -70,13 +70,14 @@ export const ActionListaPesquisaProdutosDestino = ({
 
 
 
-  const dados = dadosProdutosPesquisa.map((item, index) => {
+  const dados = dadosListaProdutoDestino.map((item, index) => {
     let contador = index + 1;
     return {
       contador,
-      IDPRODUTO: item.IDPRODUTO,
+      IDPRODUTODESTINO: item.IDPRODUTODESTINO,
       NUCODBARRAS: item.NUCODBARRAS,
       DSNOME: item.DSNOME,
+      IDRESUMOPROMOCAOMARKETING: item.IDRESUMOPROMOCAOMARKETING,
     }
   });
 
