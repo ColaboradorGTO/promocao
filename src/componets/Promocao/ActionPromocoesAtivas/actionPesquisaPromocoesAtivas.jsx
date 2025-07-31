@@ -332,14 +332,14 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
             onChangeInputFieldDTFimA={(e) => setDataFim(e.target.value)}
 
             InputFieldCodBarraComponent={InputField}
-            labelInputFieldCodBarra={"Pesquisar Produto Origem"}
+            labelInputFieldCodBarra={"Pesquisar Produtos de Origem na Promoção"}
             placeHolderInputFieldCodBarra={"Digite o produto origem"}
             valueInputFieldCodBarra={produtoOrigem}
             onChangeInputFieldCodBarra={(e) => setProdutoOrigem(e.target.value)}
 
 
             InputFieldComponent={InputField}
-            labelInputField={"Pesquisar Produto Destino"}
+            labelInputField={"Pesquisar Produtos de Destino na Promoção"}
             placeHolderInputFieldComponent={"Digite o produto destino"}
             valueInputField={produtoDestino}
             onChangeInputField={(e) => setProdutoDestino(e.target.value)}

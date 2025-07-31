@@ -206,7 +206,6 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
     ['empresa-promocoes-ativas', idResumoPromocao],
     async () => {
       const response = await get(`/empresa-promocoes-ativas?idResumoPromocao=${idResumoPromocao}`);
-      // setModalEmpresasPromocao(true);
       return response.data;
     },
     { enabled: Boolean(idResumoPromocao), staleTime: 1000 * 60 * 60 }
