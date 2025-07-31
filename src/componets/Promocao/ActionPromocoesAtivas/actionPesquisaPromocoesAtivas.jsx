@@ -24,6 +24,7 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import HeaderTable from "../../Tables/headerTable";
+import { ActionListaPesquisaProdutosDestino } from "./actionListaPesquisaProdutosDestino";
 // import { useUpdatePromocaoAtivaStatus } from "./hook/useUpdatePromocaoStatus";
 
 
@@ -133,7 +134,7 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
     ['produto-promocao-destino'],
     () => fetchListaProdutosPromocaoDestino(produtoDestino),
     {
-      enabled: Boolean(produtoDestino), staleTime: 5 * 60 * 1000,
+      enabled: false, staleTime: 5 * 60 * 1000,
     }
   );
 
@@ -305,6 +306,10 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
     setTabelaCampanha(true)
   }
 
+  const handleClickProdutoDestino = () => {
+    refetchListaProdutosDestino()
+  }
+
   const options = [
     { value: '', label: 'Selecione' },
     { value: 'True', label: 'Ativa' },
@@ -363,7 +368,7 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
 
             ButtonTypeCadastro={ButtonType}
             linkNome={"Pesquisar Produtos Destino"}
-            onButtonClickCadastro
+            onButtonClickCadastro={handleClickProdutoDestino}
             IconCadastro={AiOutlineSearch}
             corCadastro={"success"}
 
@@ -375,7 +380,7 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
 
           />
 
-
+          <ActionListaPesquisaProdutosDestino dadosListaProdutoDestino={dadosListaProdutoDestino} />
 
           {/* <div className="card">
             <ActionListaPromocoesAtivas 

@@ -5,29 +5,19 @@ import { useReactToPrint } from "react-to-print";
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
-import HeaderTable from "../../../Tables/headerTable";
+import HeaderTable from "../../Tables/headerTable";
+import { get } from "../../../api/funcRequest";
+import { ButtonTable } from "../../ButtonsTabela/ButtonTable";
+import { CiEdit } from "react-icons/ci";
 
 
-export const ActionListaPesquisaProdutosDestino = ({ 
+export const ActionListaPesquisaProdutosDestino = ({
   dadosListaProdutoDestino,
-  novoProdutoDestino,
-  setNovoProdutoDestino,
 }) => {
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const dataTableRef = useRef();
 
-  
-  const handleCheckboxChangeDestino = (id) => {
-    const produtoSelecionado = dados.find(item => String(item.IDPRODUTO) === String(id));
-    setNovoProdutoDestino(prevState => {
-      const existe = prevState.some(item => String(item.IDPRODUTO) === String(id));
-      if (existe) {
-        return prevState.filter(item => String(item.IDPRODUTO) !== String(id));
-      } else {
-        return [...prevState, produtoSelecionado];
-      }
-    });
-  }
+
 
   const onGlobalFilterChange = (e) => {
     setGlobalFilterValue(e.target.value);
@@ -35,48 +25,59 @@ export const ActionListaPesquisaProdutosDestino = ({
 
   const handlePrint = useReactToPrint({
     content: () => dataTableRef.current,
-    documentTitle: 'Produtos Promoções',
+    documentTitle: 'Produtos Destino Promoções',
   });
 
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.autoTable({
-      head: [['N.Itens', 'Código de Barras', 'Descrição']],
+      head: [['N.Item', 'Cod. Barras', 'Descrição', 'Status Produto', 'Descrição Promoção', 'Status Promoção']],
       body: dados.map(item => [
-        item.IDPRODUTO,
+        item.IDPRODUTODESTINO,
         item.NUCODBARRAS,
         item.DSNOME,
+        item.STATIVO === 'True' ? 'ATIVO' : 'INATIVO',
+        item.DSPROMOCAOMARKETING,
+        item.STATIVOPROMOCAOMARKETING === 'True' ? 'ATIVO' : 'INATIVO'
+
       ]),
       horizontalPageBreak: true,
       horizontalPageBreakBehaviour: 'immediately'
     });
-    doc.save('produtos_promocoes.pdf');
+    doc.save('produtos_destino_promocoes.pdf');
   };
 
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(dados);
     const workbook = XLSX.utils.book_new();
-    const header = ['N.Itens', 'Código de Barras', 'Descrição'];
+    const header = ['N°','N.Item', 'Descrição', 'Cod. Barras', 'Status Produto', 'Descrição Promoção', 'Status Promoção'];
     worksheet['!cols'] = [
-      { wpx: 100, caption: 'N.Itens' },
-      { wpx: 200, caption: 'Código de Barras' },
+      { wpx: 100, caption: 'N°' },
+      { wpx: 100, caption: 'N.Item' },
       { wpx: 200, caption: 'Descrição' },
-     
+      { wpx: 200, caption: 'Cod. Barras' },
+      { wpx: 200, caption: 'Status Produto' },
+      { wpx: 200, caption: 'Descrição Promoção' },
+      { wpx: 200, caption: 'Status Promoção' },
     ];
     XLSX.utils.sheet_add_aoa(worksheet, [header], { origin: 'A1' });
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Produtos Promoções Ativas');
-    XLSX.writeFile(workbook, 'produtos_promocoes.xlsx');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Produtos Destino Promoções');
+    XLSX.writeFile(workbook, 'produtos_destino_promocoes.xlsx');
   };
 
 
 
   const dados = dadosListaProdutoDestino.map((item, index) => {
     let contador = index + 1;
+
     return {
       contador,
       IDPRODUTODESTINO: item.IDPRODUTODESTINO,
-      NUCODBARRAS: item.NUCODBARRAS,
       DSNOME: item.DSNOME,
+      NUCODBARRAS: item.NUCODBARRAS,
+      STATIVO: item.STATIVO === 'True' ? 'ATIVO' : 'INATIVO',
+      DSPROMOCAOMARKETING: item.DSPROMOCAOMARKETING,
+      STATIVOPROMOCAOMARKETING: item.STATIVOPROMOCAOMARKETING === 'True' ? 'ATIVO' : 'INATIVO',
       IDRESUMOPROMOCAOMARKETING: item.IDRESUMOPROMOCAOMARKETING,
     }
   });
@@ -89,14 +90,14 @@ export const ActionListaPesquisaProdutosDestino = ({
       sortable: true,
     },
     {
-      field: 'DPRODUTO',
+      field: 'IDPRODUTODESTINO',
       header: 'N.Item',
-      body: row => <th>{row.IDPRODUTO}</th>,
+      body: row => <th>{row.IDPRODUTODESTINO}</th>,
       sortable: true,
     },
     {
       field: 'DSNOME',
-      header: 'Produto',
+      header: 'Descirição',
       body: row => <th>{row.DSNOME}</th>,
       sortable: true,
     },
@@ -106,26 +107,62 @@ export const ActionListaPesquisaProdutosDestino = ({
       body: row => <th>{row.NUCODBARRAS}</th>,
       sortable: true,
     },
-     {
-      field: '',
+    {
+      field: 'Status Produto',
+      header: 'Status Produto',
+      body: row => <th style={{ color: row.STATIVO == 'True' ? 'blue' : 'red' }}>{row.STATIVO}</th>,
+      sortable: true,
+    },
+    {
+      field: 'DSPROMOCAOMARKETING',
+      header: 'Descrição Promoção',
+      body: row => <th>{row.DSPROMOCAOMARKETING}</th>,
+      sortable: true,
+    },
+    {
+      field: 'STATIVOPROMOCAOMARKETING',
+      header: 'Status Promoção',
+      body: row => <th style={{ color: row.STATIVOPROMOCAOMARKETING == 'True' ? 'blue' : 'red' }}>{row.STATIVOPROMOCAOMARKETING }</th>,
+      sortable: true,
+    },
+    {
+      field: 'IDRESUMOPROMOCAOMARKETING',
       header: 'Opções',
+      width: "15%",
       body: row => {
         return (
-          <input
-            type="checkbox"
-            checked={novoProdutoDestino?.some(item => String(item.IDPRODUTO) === String(row.IDPRODUTO))}
-            onChange={() =>
-              handleCheckboxChangeDestino(
-                row.IDPRODUTO,
-              )
-            }
-          />
-        );
+          <div >
+            <ButtonTable
+              titleButton={"Editar "}
+              onClickButton={() => handleEdit(row)}
+              Icon={CiEdit}
+              iconSize={25}
+              width="35px"
+              height="35px"
+              iconColor={"#fff"}
+              cor={"primary"}
+
+            />
+          </div>
+        )
       },
-      sortable: false,
+      sortable: true,
     }
   ]
 
+  const handleEdit = async (row) => {
+    try {
+      const response = await get(`/promocoes-ativas?idResumoPromocao=${row.IDRESUMOPROMOCAOMARKETING}`);
+      if (response.data && response.data.length > 0) {
+        setDadosPromocao(response.data);
+        setModalVisivel(true);
+        setActionPromocaoAtiva(false);
+      }
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar detalhes da venda: ', error);
+    }
+  }
 
 
   return (
@@ -133,7 +170,7 @@ export const ActionListaPesquisaProdutosDestino = ({
 
       <div className="panel">
         <div className="panel-hdr mb-4">
-          <h2>Lista de Produtos</h2>
+          <h2>Lista de Produtos Destino</h2>
 
         </div>
         <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
