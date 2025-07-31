@@ -1,4 +1,17 @@
+// export const dataFormatada = (date) => {
+//   const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+//   const formattedDate = new Date(date).toLocaleDateString('pt-BR', options);
+//   return formattedDate;
+// };
+
 export const dataFormatada = (date) => {
+  if (!date) return '';
+  // Se a data vier no formato 'yyyy-mm-dd hh:mm:ss.sss'
+  if (typeof date === 'string' && date.match(/^\d{4}-\d{2}-\d{2}/)) {
+    // Extrai apenas a parte da data
+    const [ano, mes, dia] = date.split(' ')[0].split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
   const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
   const formattedDate = new Date(date).toLocaleDateString('pt-BR', options);
   return formattedDate;
