@@ -313,13 +313,24 @@ export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
           ]}
           labelSelectEmpresa={"Status da Promoção"}
 
-          ButtonSearchComponent={ButtonType}
-          linkNomeSearch={"Pesquisar"}
-          onButtonClickSearch={handleClickProduto}
-          corSearch={"primary"}
-          IconSearch={AiOutlineSearch}
-    
-          
+            ButtonSearchComponent={ButtonType}
+            linkNomeSearch={"Pesquisar"}
+            onButtonClickSearch={handleClickProduto}
+            corSearch={"primary"}
+            IconSearch={AiOutlineSearch}
+            
+            ButtonTypeCadastro={ButtonType}
+            linkNome={"Pesquisar Produtos Destino"}
+            onButtonClickCadastro
+            IconCadastro={AiOutlineSearch}
+            corCadastro={"success"}
+
+            ButtonTypeCancelar={ButtonType}
+            linkCancelar={"Pesquisar Produtos Origem"}
+            onButtonClickCancelar={() => console.log('')}
+            IconCancelar={AiOutlineSearch}
+            corCancelar={"danger"}
+
           />
 
 
