@@ -24,7 +24,7 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import HeaderTable from "../../Tables/headerTable";
-import { useUpdatePromocaoAtivaStatus } from "./hook/useUpdatePromocaoStatus";
+// import { useUpdatePromocaoAtivaStatus } from "./hook/useUpdatePromocaoStatus";
 
 
 export const ActionPesquisaPromocoesAtivas = ({usuarioLogado, ID}) => {
