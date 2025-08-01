@@ -23,7 +23,7 @@ import { ActionProdutoModalPromocaoSelecionadoDestino } from "./ActionProdutosDa
 
 
 
-export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir }) => {
+export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir, actionEditarVisivel, setActionEditarVisivel }) => {
 
   const {
     mecanicaSelecionada,

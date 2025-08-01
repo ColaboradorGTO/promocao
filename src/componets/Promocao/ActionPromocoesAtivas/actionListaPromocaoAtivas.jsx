@@ -6,24 +6,29 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import HeaderTable from "../../Tables/headerTable";
-import { toFloat } from "../../../utils/toFloat";
 import { formatMoeda } from "../../../utils/formatMoeda";
 import { dataFormatada, dataHoraFormatada } from "../../../utils/dataFormatada";
 import { ButtonTable } from "../../ButtonsTabela/ButtonTable";
-import { InputText } from 'primereact/inputtext';
 import { CiEdit } from "react-icons/ci";
-import Swal from "sweetalert2";
 import { ActionEditarPromocaoAtiva } from "./actionEditarPromocaoAtiva";
 import { get } from "../../../api/funcRequest";
 
 
 
-export const ActionListaPromocoesAtivas = ({ dadosListaPromocao, usuarioLogado, optionsModulos, actionPromocaoAtiva, setActionPromocaoAtiva }) => {
+export const ActionListaPromocoesAtivas = ({
+  dadosListaPromocao,
+  usuarioLogado,
+  actionPromocaoAtiva,
+  setActionPromocaoAtiva,
+  actionEditarVisivel,
+  setActionEditarVisivel,
+  dadosPromocao,
+  setDadosPromocao
+}) => {
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [editingRows, setEditingRows] = useState({});
-  const [modalVisivel, setModalVisivel] = useState(false);
   const [tabelaVisivel, setTabelaVisivel] = useState(true);
-  const [dadosPromocao, setDadosPromocao] = useState([]);
+  
   const dataTableRef = useRef();
 
 
@@ -94,67 +99,69 @@ export const ActionListaPromocoesAtivas = ({ dadosListaPromocao, usuarioLogado, 
     }
   });
 
-  const colunasListaPromocao = [
-    {
-      field: 'IDRESUMOPROMOCAOMARKETING',
-      header: 'ID',
-      body: row => <th>{row.IDRESUMOPROMOCAOMARKETING}</th>,
-      style: { width: '10%' },
-      sortable: true,
-    },
-    {
-      field: 'DSPROMOCAOMARKETING',
-      header: 'Descrição',
-      editor: (options) => textEditor(options),
-      style: { width: '30%' },
-      sortable: true,
-    },
-
-    {
-      field: 'DTHORAINICIO',
-      header: 'Data Início',
-      body: row => <th>{row.DTHORAINICIO}</th>,
-      sortable: true,
-    },
-    {
-      field: 'DTHORAFIM',
-      header: 'Data Fim',
-      body: row => <th>{row.DTHORAFIM}</th>,
-      sortable: true,
-    },
-    {
-      field: 'STATIVO',
-      header: 'Status',
-      body: row => <th >{row.STATIVO}</th>,
-      style: { width: '10%' },
-      sortable: true,
-    },
-
-    {
-      field: 'IDRESUMOPROMOCAOMARKETING',
-      header: 'Opções',
-      width: "15%",
-      body: row => {
-
-        return (
-          <div >
-            <ButtonTable
-              titleButton={"Editar "}
-              onClickButton={() => handleEdit(row)}
-              Icon={CiEdit}
-              iconSize={25}
-              width="35px"
-              height="35px"
-              iconColor={"#fff"}
-              cor={"info"}
-
-            />
-          </div>
-        )
+    const colunasListaPromocao = [
+      {
+        field: 'IDRESUMOPROMOCAOMARKETING',
+        header: 'ID',
+        body: row => <th>{row.IDRESUMOPROMOCAOMARKETING}</th>,
+        style: { width: '10%' },
+        sortable: true,
       },
-      sortable: true,
-    },
-  ]
+      {
+        field: 'DSPROMOCAOMARKETING',
+        header: 'Descrição',
+        body: row => <th>{row.DSPROMOCAOMARKETING}</th>,
+        style: { width: '30%' },
+        sortable: true,
+      },
+  
+      {
+        field: 'DTHORAINICIO',
+        header: 'Data Início',
+        body: row => <th>{dataFormatada(row.DTHORAINICIO)}</th>,
+        style: { width: '20%' },
+        sortable: true,
+      },
+      {
+        field: 'DTHORAFIM',
+        header: 'Data Fim',
+        body: row => <th>{dataFormatada(row.DTHORAFIM)}</th>,
+        style: { width: '20%' },
+        sortable: true,
+      },
+      {
+        field: 'STATIVO',
+        header: 'Status',
+        body: row => <th style={{ color: row.STATIVO === 'ATIVO' ? 'blue' : 'red', fontWeight: 'bold' }} >{row.STATIVO}</th>,
+        style: { width: '10%' },
+        bodyStyle: { textAlign: 'center' },
+        sortable: true,
+      },
+      {
+        field: 'IDRESUMOPROMOCAOMARKETING',
+        header: 'Opções',
+        width: "15%",
+        body: row => {
+  
+          return (
+            <div >
+              <ButtonTable
+                titleButton={"Editar "}
+                onClickButton={() => handleEdit(row)}
+                Icon={CiEdit}
+                iconSize={25}
+                width="35px"
+                height="35px"
+                iconColor={"#fff"}
+                cor={"primary"}
+  
+              />
+            </div>
+          )
+        },
+        sortable: true,
+      },
+    ]
 
 
   const handleEdit = async (row) => {
@@ -162,8 +169,8 @@ export const ActionListaPromocoesAtivas = ({ dadosListaPromocao, usuarioLogado, 
       const response = await get(`/promocoes-ativas?idResumoPromocao=${row.IDRESUMOPROMOCAOMARKETING}`);
       if (response.data && response.data.length > 0) {
         setDadosPromocao(response.data);
-        setModalVisivel(true);
-        // setActionPromocaoAtiva(false);
+        setActionEditarVisivel(true);
+        setActionPromocaoAtiva(false);
       }
       return response.data;
     } catch (error) {
@@ -230,12 +237,6 @@ export const ActionListaPromocoesAtivas = ({ dadosListaPromocao, usuarioLogado, 
           </DataTable>
         </div>
       </div>
-
-      <ActionEditarPromocaoAtiva
-        modalVisivel={modalVisivel}
-        setModalVisivel={setModalVisivel}
-        dadosPromocao={dadosPromocao}
-      />
 
     </Fragment>
   );

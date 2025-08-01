@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom"
 import axios from "axios";
 import { toFloat } from "../../../../utils/toFloat"
 
-export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
+export const useUpdatePromocaoAtiva = ({ dadosPromocao, modalVisivel, setModalVisivel }) => {
   const [mecanicaSelecionada, setMecanicaSelecionada] = useState(0)
   const [aplicacaoDestinoSelecionada, setAplicacaoDestinoSelecionada] = useState('')
   const [tipoDescontoSelecionado, setTipoDescontoSelecionado] = useState(0)
@@ -35,7 +35,6 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao }) => {
   const [descricao, setDescricao] = useState('')
   const [precoProduto, setPrecoProduto] = useState(0)
   const [dadosPromocoesAtivas, setDadosPromocoesAtivas] = useState([])
-  const [modalVisivel, setModalVisivel] = useState(false)
   const [mecanicaSelecionadaEdicao, setMecanicaSelecionadaEdicao] = useState('');
   const [isEditandoMecanica, setIsEditandoMecanica] = useState(false);
   const [btnSalvar, setBtnSalvar] = useState(false);

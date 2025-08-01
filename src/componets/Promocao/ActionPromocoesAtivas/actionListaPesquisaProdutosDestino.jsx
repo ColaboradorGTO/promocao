@@ -13,6 +13,12 @@ import { CiEdit } from "react-icons/ci";
 
 export const ActionListaPesquisaProdutosDestino = ({
   dadosListaProdutoDestino,
+  actionPromocaoAtiva,
+  setActionPromocaoAtiva,
+  actionEditarVisivel,
+  setActionEditarVisivel,
+  dadosPromocao,
+  setDadosPromocao
 }) => {
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const dataTableRef = useRef();
@@ -155,7 +161,7 @@ export const ActionListaPesquisaProdutosDestino = ({
       const response = await get(`/promocoes-ativas?idResumoPromocao=${row.IDRESUMOPROMOCAOMARKETING}`);
       if (response.data && response.data.length > 0) {
         setDadosPromocao(response.data);
-        setModalVisivel(true);
+        setActionEditarVisivel(true);
         setActionPromocaoAtiva(false);
       }
       return response.data;
@@ -182,7 +188,7 @@ export const ActionListaPesquisaProdutosDestino = ({
             exportToPDF={exportToPDF}
           />
         </div>
-        <div className="card custom-swal" ref={dataTableRef}>
+        <div className="card " ref={dataTableRef}>
           <DataTable
             title="Lista de Produtos"
             value={dados}
