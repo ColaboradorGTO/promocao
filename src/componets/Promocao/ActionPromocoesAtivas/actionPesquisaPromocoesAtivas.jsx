@@ -210,29 +210,6 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
             linkComponent={["Promoções Ativas"]}
             title="Lista de Promoções Ativas"
 
-            InputFieldDTInicioAComponent={InputField}
-            labelInputDTInicioA={"Data Início"}
-            valueInputFieldDTInicioA={dataInicio}
-            onChangeInputFieldDTInicioA={(e) => setDataInicio(e.target.value)}
-
-            InputFieldDTFimAComponent={InputField}
-            labelInputDTFimA={"Data Fim"}
-            valueInputFieldDTFimA={dataFim}
-            onChangeInputFieldDTFimA={(e) => setDataFim(e.target.value)}
-
-            InputFieldCodBarraComponent={InputField}
-            labelInputFieldCodBarra={"Pesquisar Produtos de Origem na Promoção"}
-            placeHolderInputFieldCodBarra={"Digite o produto origem"}
-            valueInputFieldCodBarra={produtoOrigem}
-            onChangeInputFieldCodBarra={(e) => setProdutoOrigem(e.target.value)}
-
-
-            InputFieldComponent={InputField}
-            labelInputField={"Pesquisar Produtos de Destino na Promoção"}
-            placeHolderInputFieldComponent={"Digite o produto destino"}
-            valueInputField={produtoDestino}
-            onChangeInputField={(e) => setProdutoDestino(e.target.value)}
-
             InputSelectPendenciaComponent={InputSelectAction}
             onChangeSelectPendencia={(e) => setstatusSelecionado(e.value)}
             valueSelectPendencia={statusSelecionado}
@@ -244,23 +221,48 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
             ]}
             labelSelectPendencia={"Status da Promoção"}
 
+            InputFieldDTInicioAComponent={InputField}
+            labelInputDTInicioA={"Data Início"}
+            valueInputFieldDTInicioA={dataInicio}
+            onChangeInputFieldDTInicioA={(e) => setDataInicio(e.target.value)}
+
+            InputFieldDTFimAComponent={InputField}
+            labelInputDTFimA={"Data Fim"}
+            valueInputFieldDTFimA={dataFim}
+            onChangeInputFieldDTFimA={(e) => setDataFim(e.target.value)}
+
+            // InputFieldCodBarraComponent={InputField}
+            // labelInputFieldCodBarra={"Pesquisar Produtos de Origem na Promoção"}
+            // placeHolderInputFieldCodBarra={"Digite o produto origem"}
+            // valueInputFieldCodBarra={produtoOrigem}
+            // onChangeInputFieldCodBarra={(e) => setProdutoOrigem(e.target.value)}
+
+
+            // InputFieldComponent={InputField}
+            // labelInputField={"Pesquisar Produtos de Destino na Promoção"}
+            // placeHolderInputFieldComponent={"Digite o produto destino"}
+            // valueInputField={produtoDestino}
+            // onChangeInputField={(e) => setProdutoDestino(e.target.value)}
+
+           
+
             ButtonSearchComponent={ButtonType}
             linkNomeSearch={"Pesquisar Promoções"}
             onButtonClickSearch={handleClickProduto}
             corSearch={"primary"}
             IconSearch={AiOutlineSearch}
 
-            ButtonTypeCadastro={ButtonType}
-            linkNome={"Pesquisar Produtos Origem"}
-            onButtonClickCadastro={handleClickProdutoOrigem}
-            IconCadastro={AiOutlineSearch}
-            corCadastro={"success"}
+            // ButtonTypeCadastro={ButtonType}
+            // linkNome={"Pesquisar Produtos Origem"}
+            // onButtonClickCadastro={handleClickProdutoOrigem}
+            // IconCadastro={AiOutlineSearch}
+            // corCadastro={"success"}
 
-            ButtonTypeCancelar={ButtonType}
-            linkCancelar={"Pesquisar Produtos Destino"}
-            onButtonClickCancelar={handleClickProdutoDestino}
-            IconCancelar={AiOutlineSearch}
-            corCancelar={"danger"}
+            // ButtonTypeCancelar={ButtonType}
+            // linkCancelar={"Pesquisar Produtos Destino"}
+            // onButtonClickCancelar={handleClickProdutoDestino}
+            // IconCancelar={AiOutlineSearch}
+            // corCancelar={"danger"}
 
           />
 
