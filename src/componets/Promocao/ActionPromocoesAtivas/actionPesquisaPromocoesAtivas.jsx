@@ -30,48 +30,42 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
   const [dadosPromocao, setDadosPromocao] = useState([]);
   const [produtoOrigem, setProdutoOrigem] = useState('');
   const [produtoDestino, setProdutoDestino] = useState('');
- 
 
- const fetchListaProdutosPromocaoDestino = async () => {
-      try {
-      const urlApi = `/produto-promocao-destino?dsProduto=${produtoDestino}`;
-      const response = await get(urlApi);
 
-      if (response.data.length && response.data.length === pageSize) {
-        let allData = [...response.data];
-        animacaoCarregamento(`Carregando... Página ${currentPage} de ${response.page}`, true);
+  const fetchListaProdutosPromocaoDestino = async () => {
+    const urlBase = `/produto-promocao-destino?dsProduto=${produtoDestino}`;
+    let urlApi = urlBase.includes('?') ? urlBase : urlBase + '?';
+    urlApi = urlApi.replace('&page=1', '').replace('page=1', '');
+    try {
+      animacaoCarregamento('Carregando dados...', true);
 
-        async function fetchNextPage(currentPage) {
-          try {
-            currentPage++;
-            const responseNextPage = await get(`${urlApi}&page=${currentPage}`);
-            if (responseNextPage.data.length) {
-              allData.push(...responseNextPage.data);
-              return fetchNextPage(currentPage);
-            } else {
-              return allData;
-            }
-          } catch (error) {
-            console.error('Erro ao buscar próxima página:', error);
-            throw error;
-          }
+      const primeiraPagina = 1;
+      const primeiraResposta = await get(`${urlApi}&page=${primeiraPagina}`);
+      const page = primeiraResposta.page || primeiraPagina;
+      const pageSize = primeiraResposta.pageSize || 1000;
+      const totalRows = primeiraResposta.rows || primeiraResposta.data?.length || 0;
+      const totalPages = Math.ceil(totalRows / pageSize);
+
+      let allData = [...(primeiraResposta.data || [])];
+
+      if (totalPages > 1) {
+        for (let currentPage = 2; currentPage <= totalPages; currentPage++) {
+          animacaoCarregamento(`Página ${currentPage} de ${totalPages}`, true);
+          const responsePage = await get(`${urlApi}&page=${currentPage}`);
+          allData.push(...(responsePage.data || []));
         }
-
-        await fetchNextPage(currentPage);
-        return allData;
-      } else {
-
-        return response.data;
       }
+
+      return allData;
     } catch (error) {
       console.error('Erro ao buscar dados:', error);
       throw error;
     } finally {
       fecharAnimacaoCarregamento();
     }
- }
+  }
 
- const { data: dadosListaProdutoDestino = [], error: errorProdutoDestino, isLoading: isLoadingProdutoDestino, refetch: refetchListaProdutosDestino } = useQuery(
+  const { data: dadosListaProdutoDestino = [], error: errorProdutoDestino, isLoading: isLoadingProdutoDestino, refetch: refetchListaProdutosDestino } = useQuery(
     ['produto-promocao-destino'],
     () => fetchListaProdutosPromocaoDestino(produtoDestino),
     {
@@ -80,32 +74,30 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
   );
 
   const fetchListaProdutosPromocaoOrigem = async () => {
+    const urlBase = `/produto-promocao-origem?dsProduto=${produtoOrigem}`;
+    let urlApi = urlBase.includes('?') ? urlBase : urlBase + '?';
+    urlApi = urlApi.replace('&page=1', '').replace('page=1', '');
     try {
-      const urlApi = `/produto-promocao-origem?dsProduto=${produtoOrigem}`;
-      const response = await get(urlApi);
-      if (response.data.length && response.data.length === pageSize) {
-        let allData = [...response.data];
-        animacaoCarregamento(`Carregando... Página ${currentPage} de ${response.page}`, true);
-        async function fetchNextPage(currentPage) {
-          try {
-            currentPage++;
-            const responseNextPage = await get(`${urlApi}&page=${currentPage}`);
-            if (responseNextPage.data.length) {
-              allData.push(...responseNextPage.data);
-              return fetchNextPage(currentPage);
-            } else {
-              return allData;
-            }
-          } catch (error) {
-            console.error('Erro ao buscar próxima página:', error);
-            throw error;
-          }
+      animacaoCarregamento('Carregando dados...', true);
+
+      const primeiraPagina = 1;
+      const primeiraResposta = await get(`${urlApi}&page=${primeiraPagina}`);
+      const page = primeiraResposta.page || primeiraPagina;
+      const pageSize = primeiraResposta.pageSize || 1000;
+      const totalRows = primeiraResposta.rows || primeiraResposta.data?.length || 0;
+      const totalPages = Math.ceil(totalRows / pageSize);
+
+      let allData = [...(primeiraResposta.data || [])];
+
+      if (totalPages > 1) {
+        for (let currentPage = 2; currentPage <= totalPages; currentPage++) {
+          animacaoCarregamento(`Página ${currentPage} de ${totalPages}`, true);
+          const responsePage = await get(`${urlApi}&page=${currentPage}`);
+          allData.push(...(responsePage.data || []));
         }
-        await fetchNextPage(currentPage);
-        return allData;
-      } else {
-        return response.data;
       }
+
+      return allData;
     } catch (error) {
       console.error('Erro ao buscar dados:', error);
       throw error;
@@ -124,9 +116,10 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
 
 
   const fetchListaProdutosPromocao = async () => {
+    const urlBase = `/promocoes-ativas?dataPesquisaInicio=${dataInicio}&dataPesquisaFim=${dataFim}&status=${statusSelecionado}`;
+    let urlApi = urlBase.includes('?') ? urlBase : urlBase + '?';
+    urlApi = urlApi.replace('&page=1', '').replace('page=1', '');
     try {
-      const urlApi = `/promocoes-ativas?dataPesquisaInicio=${dataInicio}&dataPesquisaFim=${dataFim}&status=${statusSelecionado}`;
-      const response = await get(urlApi);
 
       if (response.data.length && response.data.length === pageSize) {
         let allData = [...response.data];
@@ -270,22 +263,22 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
             corCancelar={"danger"}
 
           />
-      
+
           {tabelaProdutoDestino && (
 
-          <ActionListaPesquisaProdutosDestino
-            dadosListaProdutoDestino={dadosListaProdutoDestino} 
-            dadosPromocao={dadosPromocao}
-            setDadosPromocao={setDadosPromocao}
-            actionPromocaoAtiva={actionPromocaoAtiva}
-            setActionPromocaoAtiva={setActionPromocaoAtiva}
-            actionEditarVisivel={actionEditarVisivel}
-            setActionEditarVisivel={setActionEditarVisivel}
-          />
+            <ActionListaPesquisaProdutosDestino
+              dadosListaProdutoDestino={dadosListaProdutoDestino}
+              dadosPromocao={dadosPromocao}
+              setDadosPromocao={setDadosPromocao}
+              actionPromocaoAtiva={actionPromocaoAtiva}
+              setActionPromocaoAtiva={setActionPromocaoAtiva}
+              actionEditarVisivel={actionEditarVisivel}
+              setActionEditarVisivel={setActionEditarVisivel}
+            />
           )}
 
           {tabelaProdutoOrigem && (
-            <ActionListaPesquisaProdutosOrigem 
+            <ActionListaPesquisaProdutosOrigem
               dadosListaProdutoOrigem={dadosListaProdutoOrigem}
               dadosPromocao={dadosPromocao}
               setDadosPromocao={setDadosPromocao}
@@ -297,16 +290,16 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
           )}
 
           {tabelaCampanha && (
-              <ActionListaPromocoesAtivas 
-                dadosListaPromocao={dadosListaPromocao} 
-                usuarioLogado={usuarioLogado}
-                actionPromocaoAtiva={actionPromocaoAtiva}
-                setActionPromocaoAtiva={setActionPromocaoAtiva}
-                actionEditarVisivel={actionEditarVisivel}
-                setActionEditarVisivel={setActionEditarVisivel}
-                dadosPromocao={dadosPromocao}
-                setDadosPromocao={setDadosPromocao}
-              />
+            <ActionListaPromocoesAtivas
+              dadosListaPromocao={dadosListaPromocao}
+              usuarioLogado={usuarioLogado}
+              actionPromocaoAtiva={actionPromocaoAtiva}
+              setActionPromocaoAtiva={setActionPromocaoAtiva}
+              actionEditarVisivel={actionEditarVisivel}
+              setActionEditarVisivel={setActionEditarVisivel}
+              dadosPromocao={dadosPromocao}
+              setDadosPromocao={setDadosPromocao}
+            />
           )}
 
         </>
@@ -322,7 +315,7 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
           setActionEditarVisivel={setActionEditarVisivel}
         />
       )}
- 
+
     </Fragment >
   )
 }
