@@ -118,14 +118,14 @@ export const ActionListaPromocoesAtivas = ({
       {
         field: 'DTHORAINICIO',
         header: 'Data Início',
-        body: row => <th>{dataFormatada(row.DTHORAINICIO)}</th>,
+        body: row => <th>{row.DTHORAINICIO}</th>,
         style: { width: '20%' },
         sortable: true,
       },
       {
         field: 'DTHORAFIM',
         header: 'Data Fim',
-        body: row => <th>{dataFormatada(row.DTHORAFIM)}</th>,
+        body: row => <th>{row.DTHORAFIM}</th>,
         style: { width: '20%' },
         sortable: true,
       },
@@ -205,7 +205,7 @@ export const ActionListaPromocoesAtivas = ({
             globalFilter={globalFilterValue}
             sortOrder={-1}
             paginator={true}
-            rows={10}
+            rows={dados.length}
             rowsPerPageOptions={[10, 20, 50, 100, dados.length]}
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Registros"
