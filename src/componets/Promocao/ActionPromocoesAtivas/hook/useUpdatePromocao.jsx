@@ -210,17 +210,6 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao, modalVisivel, setModalVi
     { enabled: Boolean(idResumoPromocao), staleTime: 1000 * 60 * 60 }
   );
 
-// const mostrarEmpresasPromocao = async () => {
-//     try {
-//       const response = await get(`/empresa-promocoes-ativas?idResumoPromocao=${idResumoPromocao}`);
-//       if (response) {
-//         setDadosEmpresasPromocoes(response.data);
-//         setModalEmpresasPromocao(true);
-//       }
-//     } catch (error) {
-//       console.error('Erro ao buscar detalhes da venda: ', error);
-//     }
-//   };
 
   useEffect(() => {
     if (marcaSelecionada) {

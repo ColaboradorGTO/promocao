@@ -96,7 +96,6 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir, a
     onSubmit,
     optionsEmpresasPromocoes,
     optionsStatus,
-    // mostrarEmpresasPromocao,
     mostrarProdutosPromocao,
     handlePesquisarProdutoDestino,
     handlePesquisarProdutoOrigem,
