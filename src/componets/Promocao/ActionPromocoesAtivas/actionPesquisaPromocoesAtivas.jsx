@@ -250,7 +250,7 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
             corCadastro={"success"}
 
             ButtonTypeCancelar={ButtonType}
-            linkCancelar={"Pesquisar Proomoção"}
+            linkCancelar={"Pesquisar Promoção"}
             onButtonClickCancelar={handleClickProduto}
             IconCancelar={AiOutlineSearch}
             corCancelar={"danger"}
