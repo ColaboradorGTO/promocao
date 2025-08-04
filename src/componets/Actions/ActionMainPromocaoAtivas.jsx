@@ -137,7 +137,7 @@ export const ActionMainPromocaoAtivas = ({
                   </div>            
 
                   <div className="row mt-3">
-                    <div className="col-sm-6 col-md-6 col-xl-6 ">
+                    <div className="col-sm-6 col-md-4 col-xl-4 ">
                       {InputFieldProdutoDestino && (
                         <InputFieldProdutoDestino
                           label={labelInputProdutoDestino}
@@ -154,7 +154,7 @@ export const ActionMainPromocaoAtivas = ({
                       )}
                     </div>
 
-                    <div className="col-sm-6 col-md-6 col-xl-6 ">
+                    <div className="col-sm-6 col-md-4 col-xl-4 ">
                       {InputFieldProdutoOrigem && (
                         <InputFieldProdutoOrigem
                           label={labelInputProdutoOrigem}

@@ -11,6 +11,10 @@ import { InputSelectAction } from "../../Inputs/InputSelectAction";
 import { ActionEditarPromocaoAtiva } from "./actionEditarPromocaoAtiva";
 import { ActionListaPesquisaProdutosDestino } from "./actionListaPesquisaProdutosDestino";
 import { ActionListaPesquisaProdutosOrigem } from "./actionListaPesquisaProdutosOrigem";
+import { ActionMainPromocaoAtivas } from "../../Actions/ActionMainPromocaoAtivas";
+import { InputSelectActionPromocao } from "../../Inputs/InputSelectActionPromocao";
+import { InputFieldAction } from "../../Buttons/InputAction";
+import { InputSearchAction } from "../../Buttons/InputSearchAction";
 // import { useUpdatePromocaoAtivaStatus } from "./hook/useUpdatePromocaoStatus";
 
 
@@ -198,12 +202,12 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
 
       {actionPromocaoAtiva && (
         <>
-          <ActionMain
+           <ActionMainPromocaoAtivas
             linkComponentAnterior={["Home"]}
             linkComponent={["Promoções Ativas"]}
             title="Lista de Promoções Ativas"
 
-            InputSelectPendenciaComponent={InputSelectAction}
+            InputSelectPendenciaComponent={InputSelectActionPromocao}
             onChangeSelectPendencia={(e) => setstatusSelecionado(e.value)}
             valueSelectPendencia={statusSelecionado}
             optionsPendencia={[
@@ -214,46 +218,41 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
             ]}
             labelSelectPendencia={"Status da Promoção"}
 
-            InputFieldDTInicioAComponent={InputField}
-            labelInputDTInicioA={"Data Início"}
-            valueInputFieldDTInicioA={dataInicio}
-            onChangeInputFieldDTInicioA={(e) => setDataInicio(e.target.value)}
+            InputFieldDTInicioComponent={InputFieldAction}
+            labelInputDTInicio={"Data Início"}
+            valueInputFieldDTInicio={dataInicio}
+            onChangeInputFieldDTInicio={(e) => setDataInicio(e.target.value)}
 
-            InputFieldDTFimAComponent={InputField}
-            labelInputDTFimA={"Data Fim"}
-            valueInputFieldDTFimA={dataFim}
-            onChangeInputFieldDTFimA={(e) => setDataFim(e.target.value)}
+            InputFieldDTFimComponent={InputFieldAction}
+            labelInputDTFim={"Data Fim"}
+            valueInputFieldDTFim={dataFim}
+            onChangeInputFieldDTFim={(e) => setDataFim(e.target.value)}
 
-            InputFieldCodBarraComponent={InputField}
-            labelInputFieldCodBarra={"Produtos Origem na Promoção"}
-            placeHolderInputFieldCodBarra={"Digite o produto origem"}
-            valueInputFieldCodBarra={produtoOrigem}
-            onChangeInputFieldCodBarra={(e) => setProdutoOrigem(e.target.value)}
+            InputFieldProdutoDestino={InputSearchAction}
+            labelInputProdutoDestino={"Produtos Destino"}
+            // labelBtnProdutoDestino={"Pesquisar"}
+            valueInputFieldProdutoDestino={produtoDestino}
+            onChangeInputFieldProdutoDestino={(e) => setProdutoDestino(e.target.value)}
+            placeHolderInputFieldProdutoDestino={"Digite o produto destino"}
+            IconSearchDestino={AiOutlineSearch}
+            corSearchDestino={"p-button-info"}
+            onButtonClickDestino={handleClickProdutoDestino}
 
-
-            InputFieldComponent={InputField}
-            labelInputField={"Produtos Destino na Promoção"}
-            placeHolderInputFieldComponent={"Digite o produto destino"}
-            valueInputField={produtoDestino}
-            onChangeInputField={(e) => setProdutoDestino(e.target.value)}
+            InputFieldProdutoOrigem={InputSearchAction}
+            labelInputProdutoOrigem={"Produtos Origem"}
+            // labelBtnProdutoOrigem={"Pesquisar"}
+            placeHolderInputFieldProdutoOrigem={"Digite o produto origem"}
+            valueInputFieldProdutoOrigem={produtoOrigem}
+            onChangeInputFieldProdutoOrigem={(e) => setProdutoOrigem(e.target.value)}
+            IconSearchOrigem={AiOutlineSearch}
+            corSearchOrigem={"p-button-secondary"}
+            onButtonClickOrigem={handleClickProdutoOrigem}
 
             ButtonSearchComponent={ButtonType}
-            linkNomeSearch={"Pesquisar Produtos Origem"}
-            onButtonClickSearch={handleClickProdutoOrigem}
+            linkNomeSearch={"Pesquisar Promoções"}
+            onButtonClickSearch={handleClickProduto}
             corSearch={"primary"}
             IconSearch={AiOutlineSearch}
-
-            ButtonTypeCadastro={ButtonType}
-            linkNome={"Pesquisar Produtos Destino"}
-            onButtonClickCadastro={handleClickProdutoDestino}
-            IconCadastro={AiOutlineSearch}
-            corCadastro={"success"}
-
-            ButtonTypeCancelar={ButtonType}
-            linkCancelar={"Pesquisar Promoção"}
-            onButtonClickCancelar={handleClickProduto}
-            IconCancelar={AiOutlineSearch}
-            corCancelar={"danger"}
 
           />
 
