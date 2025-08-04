@@ -224,38 +224,36 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
             valueInputFieldDTFimA={dataFim}
             onChangeInputFieldDTFimA={(e) => setDataFim(e.target.value)}
 
-            // InputFieldCodBarraComponent={InputField}
-            // labelInputFieldCodBarra={"Pesquisar Produtos de Origem na Promoção"}
-            // placeHolderInputFieldCodBarra={"Digite o produto origem"}
-            // valueInputFieldCodBarra={produtoOrigem}
-            // onChangeInputFieldCodBarra={(e) => setProdutoOrigem(e.target.value)}
+            InputFieldCodBarraComponent={InputField}
+            labelInputFieldCodBarra={"Produtos Origem na Promoção"}
+            placeHolderInputFieldCodBarra={"Digite o produto origem"}
+            valueInputFieldCodBarra={produtoOrigem}
+            onChangeInputFieldCodBarra={(e) => setProdutoOrigem(e.target.value)}
 
 
-            // InputFieldComponent={InputField}
-            // labelInputField={"Pesquisar Produtos de Destino na Promoção"}
-            // placeHolderInputFieldComponent={"Digite o produto destino"}
-            // valueInputField={produtoDestino}
-            // onChangeInputField={(e) => setProdutoDestino(e.target.value)}
-
-           
+            InputFieldComponent={InputField}
+            labelInputField={"Produtos Destino na Promoção"}
+            placeHolderInputFieldComponent={"Digite o produto destino"}
+            valueInputField={produtoDestino}
+            onChangeInputField={(e) => setProdutoDestino(e.target.value)}
 
             ButtonSearchComponent={ButtonType}
-            linkNomeSearch={"Pesquisar Promoções"}
-            onButtonClickSearch={handleClickProduto}
+            linkNomeSearch={"Pesquisar Produtos Origem"}
+            onButtonClickSearch={handleClickProdutoOrigem}
             corSearch={"primary"}
             IconSearch={AiOutlineSearch}
 
-            // ButtonTypeCadastro={ButtonType}
-            // linkNome={"Pesquisar Produtos Origem"}
-            // onButtonClickCadastro={handleClickProdutoOrigem}
-            // IconCadastro={AiOutlineSearch}
-            // corCadastro={"success"}
+            ButtonTypeCadastro={ButtonType}
+            linkNome={"Pesquisar Produtos Destino"}
+            onButtonClickCadastro={handleClickProdutoDestino}
+            IconCadastro={AiOutlineSearch}
+            corCadastro={"success"}
 
-            // ButtonTypeCancelar={ButtonType}
-            // linkCancelar={"Pesquisar Produtos Destino"}
-            // onButtonClickCancelar={handleClickProdutoDestino}
-            // IconCancelar={AiOutlineSearch}
-            // corCancelar={"danger"}
+            ButtonTypeCancelar={ButtonType}
+            linkCancelar={"Pesquisar Produtos"}
+            onButtonClickCancelar={handleClickProduto}
+            IconCancelar={AiOutlineSearch}
+            corCancelar={"danger"}
 
           />
 
