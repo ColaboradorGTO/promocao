@@ -521,11 +521,11 @@ export const useCreatePromocaoAtiva = ({ }) => {
         return;
       }
 
-      if (descricao.length < 20 || descricao.length > 200) {
+      if (descricao.length < 2 || descricao.length > 200) {
         Swal.fire({
           position: 'center',
           icon: 'error',
-          title: 'Descrição deve ter entre 20 e 200 caracteres!',
+          title: 'Descrição deve ter entre 2 e 200 caracteres!',
           customClass: {
             container: 'custom-swal',
           },
