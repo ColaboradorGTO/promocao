@@ -17,7 +17,7 @@ export const InputSearchAction = ({
   return (
 
     <Fragment>
-      <div>
+      <div style={{margin: '0px', padding: '0px'}}>
 
         <label htmlFor="">{label}</label>
         <div className="p-inputgroup flex-1">

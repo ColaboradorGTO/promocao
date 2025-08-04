@@ -176,6 +176,8 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
     setCurrentPage(prevPage => prevPage + 1);
     refetchListaProdutos()
     setTabelaCampanha(true)
+    setTabelaProdutoDestino(false)
+    setTabelaProdutoOrigem(false)
   }
 
   const handleClickProdutoDestino = () => {

@@ -101,7 +101,8 @@ export const ActionMainPromocaoAtivas = ({
                         id={id}
                         options={optionsPendencia}
                         onChange={onChangeSelectPendencia}
-                        value={valueSelectPendencia}
+                        // value={valueSelectPendencia}
+                        defaultValue={valueSelectPendencia}
                         readOnly={readOnlyPendencia}
                         isVisible={stylePendencia}
                         type="select"
@@ -136,7 +137,7 @@ export const ActionMainPromocaoAtivas = ({
                     </div>
                   </div>            
 
-                  <div className="row mt-3">
+                  <div className="row mt-3" style={{margin: '0px', padding: '0px'}}>
                     <div className="col-sm-6 col-md-4 col-xl-4 ">
                       {InputFieldProdutoDestino && (
                         <InputFieldProdutoDestino
