@@ -625,6 +625,8 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir, a
         setProdutoOrigemSelecionado={setProdutoOrigemSelecionado}
         novoProdutoOrigem={novoProdutoOrigem}
         setNovoProdutoOrigem={setNovoProdutoOrigem}
+        fileProdutoOrigem={fileProdutoOrigem}
+        setFileProdutoOrigem={setFileProdutoOrigem}
       />
 
       <ActionProdutoModalPromocaoSelecionadoDestino
@@ -634,6 +636,8 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir, a
         setProdutoDestinoSelecionado={setProdutoDestinoSelecionado}
         novoProdutoDestino={novoProdutoDestino}
         setNovoProdutoDestino={setNovoProdutoDestino}
+        fileProdutoDestino={fileProdutoDestino}
+        setFileProdutoDestino={setFileProdutoDestino}
       />
   
     </Fragment>
