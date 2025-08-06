@@ -8,24 +8,30 @@
 //   const [dataInicio, setDataInicio] = useState("");
 //   const [dataFim, setDataFim] = useState("");
 
-//   useEffect(() => {
-//     const dataInicial = getDataAtual()
-//     const dataFinal = getDataAtual()
-//     setDataInicio(dataInicial)
-//     setDataFim(dataFinal)
-//   }, [])
+
 
 //   const verificarPromocaoExpirada = async () => {
 //     if(!dadosListaPromocao || dadosListaPromocao.length === 0) return
 
-//     const dataAtual = new Date();
 //     const promocoesExpiradas = [];
+//     const dataUmdiaAntesString = getUmdiaAntes();
+//     const dataUmdiaAntes = new Date(dataUmdiaAntesString);
 
 //     dadosListaPromocao.forEach(promocao => {
 //       if(promocao?.DTHORAFIM) {
 //         const dataFimPromocao = new Date(promocao.DTHORAFIM);
-
-//         if(dataFimPromocao < dataAtual && promocao.STATIVO === 'True') {
+        
+//         const dataFimPromocaoFormatada = new Date(
+//           dataFimPromocao.getFullYear(), 
+//           dataFimPromocao.getMonth(), 
+//           dataFimPromocao.getDate()
+//         );
+//         const dataUmdiaAntesFormatada = new Date(
+//           dataUmdiaAntes.getFullYear(), 
+//           dataUmdiaAntes.getMonth(), 
+//           dataUmdiaAntes.getDate()
+//         );
+//         if(dataFimPromocaoFormatada.getTime() === dataUmdiaAntesFormatada.getTime()) {
 //           promocoesExpiradas.push(promocao);
 //         }
 //       }
