@@ -15,6 +15,7 @@ import { ActionMainPromocaoAtivas } from "../../Actions/ActionMainPromocaoAtivas
 import { InputSelectActionPromocao } from "../../Inputs/InputSelectActionPromocao";
 import { InputFieldAction } from "../../Buttons/InputAction";
 import { InputSearchAction } from "../../Buttons/InputSearchAction";
+import { useUpdatePromocaoAtivaStatus } from "./hook/useUpdatePromocaoStatus";
 // import { useUpdatePromocaoAtivaStatus } from "./hook/useUpdatePromocaoStatus";
 
 
@@ -160,12 +161,12 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
     }
   );
 
-  // const {
-  //   verificarPromocaoExpirada,
-  //   desativarPromocao
-  // } = useUpdatePromocaoAtivaStatus({
-  //   dadosListaPromocao
-  // })
+  const {
+    verificarPromocaoExpirada,
+    desativarPromocao
+  } = useUpdatePromocaoAtivaStatus({
+    dadosListaPromocao
+  })
 
   const handleClickIncluir = () => {
     setActionPromocaoAtiva(true)
@@ -178,6 +179,7 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
     setTabelaCampanha(true)
     setTabelaProdutoDestino(false)
     setTabelaProdutoOrigem(false)
+    verificarPromocaoExpirada()
   }
 
   const handleClickProdutoDestino = () => {
