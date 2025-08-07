@@ -157,7 +157,7 @@ export const ActionPesquisaPromocoesAtivas = ({ usuarioLogado, ID }) => {
     ['promocoes-ativas'],
     () => fetchListaProdutosPromocao(dataInicio, dataFim, currentPage, pageSize),
     {
-      enabled: Boolean(isQueryData), staleTime: 5 * 60 * 1000,
+      enabled: false, staleTime: 5 * 60 * 1000,
     }
   );
 
