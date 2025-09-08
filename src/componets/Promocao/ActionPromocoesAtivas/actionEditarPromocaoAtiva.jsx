@@ -130,7 +130,8 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir, a
     setDadosEmpresasPromocoes,
     mostrarProdutosSelecionadosOrigem,
     mostrarProdutosSelecionadosDestino,
-    refetchEmpresasPromocoes
+    refetchEmpresasPromocoes,
+    refetchEmpresasPromocoess
   } = useUpdatePromocaoAtiva({ dadosPromocao });
 
   const customStyles = {
@@ -143,12 +144,6 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir, a
       color: state.data.color,
     }),
   };
-
-  // const handleEmpresaChange = useCallback((selectedOptions) => {
-  //   const values = selectedOptions.map((option) => option.value);
-  //   setEmpresaSelecionada(values);
-  // }, [setEmpresaSelecionada]);
-
 
   const handleChangeMecanica = useCallback((selectedValue) => {
 
@@ -304,7 +299,8 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir, a
       const defaults = dadosEmpresasPromocoes.map(emp => ({
         value: emp.IDEMPRESA,
         label: emp.NOFANTASIA,
-        status: emp.STATIVO
+        status: emp.STATIVO,
+        isFixed: true
       }));
       setEmpresasSelecionadas(defaults);
       
@@ -441,7 +437,20 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir, a
             label: empresa.NOFANTASIA
           }))
         ]}
-        onChangeSelectEmpresaAsync={(selectedOptions) => {
+          onChangeSelectEmpresaAsync={(selectedOptions, actionMeta) => {
+          if (
+            actionMeta &&
+            (actionMeta.action === 'remove-value' || actionMeta.action === 'pop-value')
+          ) {
+            if (actionMeta.removedValue && actionMeta.removedValue.isFixed) {
+              return; 
+            }
+          }
+      
+          if (actionMeta && actionMeta.action === 'clear') {
+            selectedOptions = (empresasSelecionadas || []).filter(opt => opt.isFixed);
+          }
+
           if (!selectedOptions || selectedOptions.length === 0) {
             setEmpresasSelecionadas([]);
             return;
@@ -449,7 +458,8 @@ export const ActionEditarPromocaoAtiva = ({ dadosPromocao, handleClickIncluir, a
           if (selectedOptions.some((option) => option.value === "all")) {
             const allOptions = empresasFiltradas.map((empresa) => ({
               value: empresa.IDEMPRESA,
-              label: empresa.NOFANTASIA
+              label: empresa.NOFANTASIA,
+              isFixed: empresasSelecionadas?.find(e => e.value === empresa.IDEMPRESA)?.isFixed
             }));
             setEmpresasSelecionadas(allOptions);
           } else {

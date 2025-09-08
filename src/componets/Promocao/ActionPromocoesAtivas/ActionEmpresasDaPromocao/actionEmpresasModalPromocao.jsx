@@ -8,7 +8,7 @@ export const ActionEmpresasModalPromocao = ({
     dadosEmpresasPromocoes, 
     show, 
     handleClose,  
-    refetchEmpresasPromocoes
+    refetchEmpresasPromocoes,
 }) => {
     return (
         <Fragment>

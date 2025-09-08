@@ -1277,6 +1277,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao, modalVisivel, setModalVi
     mostrarProdutosSelecionadosOrigem,
     mostrarProdutosSelecionadosDestino,
     refetchEmpresasPromocoes,
+    refetchEmpresasPromocoess,
     onSubmit
   }
 }

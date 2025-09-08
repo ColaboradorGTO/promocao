@@ -16,7 +16,7 @@ import { FaCheck } from "react-icons/fa";
 
 export const ActionListaEmpresasPromocao = ({
   dadosEmpresasPromocoes,
-  refetchEmpresasPromocoes
+  refetchEmpresasPromocoes,
 }) => {
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const dataTableRef = useRef();
@@ -217,7 +217,7 @@ export const ActionListaEmpresasPromocao = ({
           setDadosTabelaEmpresasPromocao((prev) =>
             prev.map((item) =>
               item.IDEMPRESAPROMOCAOMARKETING === row.IDEMPRESAPROMOCAOMARKETING
-                ? { ...item, STATIVO: 'INATIVO' }
+                ? { ...item, STATIVO: 'False' }
                 : item
             )
           );
@@ -298,7 +298,7 @@ export const ActionListaEmpresasPromocao = ({
           setDadosTabelaEmpresasPromocao((prev) =>
             prev.map((item) =>
               item.IDEMPRESAPROMOCAOMARKETING === row.IDEMPRESAPROMOCAOMARKETING
-                ? { ...item, STATIVO: 'ATIVO' }
+                ? { ...item, STATIVO: 'True' }
                 : item
             )
           );
