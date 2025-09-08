@@ -84,6 +84,10 @@ export const ActionDocumentacaoAtualizar = ({ show, handleClose }) => {
                                 Para adicionar produtos, use o campo de pesquisa ou faça upload de arquivo CSV/Excel
                             </li>
                             <li style={{ marginBottom: "8px" }}>
+                                    Se os produtos forem inseridos via CSV/Excel, o arquivo deve conter apenas uma coluna com o número de itens.
+                                     Não funciona com Código de Barras.
+                            </li>
+                            <li style={{ marginBottom: "8px" }}>
                                 Para remover produtos, clique no botão de visualizar Produtos da Promoção Ativa e remova individualmente
                             </li>
                             <li style={{ marginBottom: "8px" }}>
