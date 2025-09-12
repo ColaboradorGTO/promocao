@@ -103,7 +103,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao, modalVisivel, setModalVi
       return null;
     }
   }
-  
+
   useEffect(() => {
     const dataInicial = getDataTresMesesAtras()
     const dataFinal = getDataAtual()
@@ -735,7 +735,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao, modalVisivel, setModalVi
     [empresasSelecionadas]
   );
   
-
+  console.log(usuarioLogado, "usuario logado no sistema")
   const onSubmit = async (data) => {
     
     try {
