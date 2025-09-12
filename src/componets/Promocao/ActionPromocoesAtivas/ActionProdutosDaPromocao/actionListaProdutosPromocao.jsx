@@ -351,7 +351,8 @@ export const ActionListaProdutosPromocao = ({
           }
           const response = await put('/desativar-produto-promocao-origem', putData)
           const textDados = JSON.stringify(putData)
-          let textoFuncao = 'PROMOÇÃO/DESATIVAR PRODUTO PROMOÇÃO ORIGEM';
+
+          let textoFuncao = 'PROMOÇÃO/DESATIVAR PRODUTO NA PROMOÇÃO';
           const postData = {
             IDFUNCIONARIO: String(usuarioLogado?.id),
             PATHFUNCAO: textoFuncao,
@@ -380,7 +381,13 @@ export const ActionListaProdutosPromocao = ({
           );
           return responsePost;
         } catch (error) {
-          let textoFuncao ='PROMOÇÃO/ERRO AO DESATIVAR PRODUTO PROMOÇÃO ORIGEM';
+          const putData = {
+            STATIVO: 'False',
+            IDRESUMOPROMOCAOMARKETING: row.IDRESUMOPROMOCAOMARKETING,
+            IDPRODUTOORIGEM: row.IDPRODUTOORIGEM,
+          }
+          const textDados = JSON.stringify(putData)
+          let textoFuncao ='PROMOÇÃO/ERRO AO DESATIVAR PRODUTO NA PROMOÇÃO';
 
           const postData = {
             IDFUNCIONARIO: String(usuarioLogado?.id),
@@ -460,6 +467,12 @@ export const ActionListaProdutosPromocao = ({
           );
           return responsePost;
         } catch (error) {
+          const putData = {
+            STATIVO: 'True',
+            IDRESUMOPROMOCAOMARKETING: row.IDRESUMOPROMOCAOMARKETING,
+            IDPRODUTOORIGEM: row.IDPRODUTOORIGEM,
+          }
+          const textDados = JSON.stringify(putData)
           let textoFuncao ='PROMOÇÃO/ERRO AO ATIVAR PRODUTO PROMOÇÃO ORIGEM';
 
           const postData = {
@@ -539,12 +552,18 @@ export const ActionListaProdutosPromocao = ({
           );
           return response.data;
         } catch (error) {
+          const putData = {
+            STATIVO: 'False',
+            IDRESUMOPROMOCAOMARKETING: row?.IDRESUMOPROMOCAOMARKETING,
+            IDPRODUTODESTINO: row?.IDPRODUTODESTINO,
+          }
+          const textDados = JSON.stringify(putData)
           let textoFuncao ='PROMOÇÃO/ERRO AO DESATIVAR PRODUTO PROMOÇÃO DESTINO';
 
           const postData = {
             IDFUNCIONARIO: String(usuarioLogado?.id),
             PATHFUNCAO: textoFuncao,
-            DADOS: '',
+            DADOS: textDados,
             IP: ipUsuario
           }
 
@@ -619,6 +638,12 @@ export const ActionListaProdutosPromocao = ({
           );
           return responsePost;
         } catch (error) {
+          const putData = {
+            STATIVO: 'True',
+            IDRESUMOPROMOCAOMARKETING: row.IDRESUMOPROMOCAOMARKETING,
+            IDPRODUTODESTINO: row.IDPRODUTODESTINO,
+          }
+          const textDados = JSON.stringify(putData)
           let textoFuncao ='PROMOÇÃO/ERRO AO ATIVAR PRODUTO PROMOÇÃO DESTINO';
 
           const postData = {

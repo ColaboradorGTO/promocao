@@ -194,7 +194,7 @@ export const ActionListaEmpresasPromocao = ({
           }
           const response = await put('/desativar-empresa-promocao', putData)
           const textDados = JSON.stringify(putData)
-          let textoFuncao = 'PROMOÇÃO/DESATIVAR EMPRESA PROMOÇÃO ORIGEM';
+          let textoFuncao = 'PROMOÇÃO/DESATIVAR EMPRESA NA PROMOÇÃO';
           const postData = {
             IDFUNCIONARIO: String(usuarioLogado?.id),
             PATHFUNCAO: textoFuncao,
@@ -223,12 +223,19 @@ export const ActionListaEmpresasPromocao = ({
           );
           return responsePost;
         } catch (error) {
-          let textoFuncao = 'PROMOÇÃO/ERRO AO DESATIVAR EMPRESA PROMOÇÃO ORIGEM';
+          const putData = {
+            STATIVO: 'True',
+            IDRESUMOPROMOCAOMARKETING: row.IDRESUMOPROMOCAOMARKETING,
+            IDEMPRESA: row.IDEMPRESA,
+            IDEMPRESAPROMOCAOMARKETING: row.IDEMPRESAPROMOCAOMARKETING
+          }
+          const textDados = JSON.stringify(putData)
+          let textoFuncao = 'PROMOÇÃO/ERRO AO DESATIVAR EMPRESA NA PROMOÇÃO';
 
           const postData = {
             IDFUNCIONARIO: String(usuarioLogado?.id),
             PATHFUNCAO: textoFuncao,
-            DADOS: '',
+            DADOS: textDados,
             IP: ipUsuario
           }
 
@@ -304,12 +311,19 @@ export const ActionListaEmpresasPromocao = ({
           );
           return responsePost;
         } catch (error) {
-          let textoFuncao = 'PROMOÇÃO/ERRO AO ATIVAR EMPRESA NA PROMOÇÃO ORIGEM';
+          const putData = {
+            STATIVO: 'True',
+            IDRESUMOPROMOCAOMARKETING: row.IDRESUMOPROMOCAOMARKETING,
+            IDEMPRESA: row.IDEMPRESA,
+            IDEMPRESAPROMOCAOMARKETING: row.IDEMPRESAPROMOCAOMARKETING
+          }
+          const textDados = JSON.stringify(putData)
+          let textoFuncao = 'PROMOÇÃO/ERRO AO ATIVAR EMPRESA NA PROMOÇÃO';
 
           const postData = {
             IDFUNCIONARIO: String(usuarioLogado?.id),
             PATHFUNCAO: textoFuncao,
-            DADOS: '',
+            DADOS: textDados,
             IP: ipUsuario
           }
           const responsePost = await post('/log-web', postData)

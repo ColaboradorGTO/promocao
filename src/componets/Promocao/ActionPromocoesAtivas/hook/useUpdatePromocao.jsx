@@ -1060,6 +1060,18 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao, modalVisivel, setModalVi
 
       const response = await put('/promocoes-ativas/:id', putData);
 
+      const textDados = JSON.stringify(putData)
+      let textoFuncao = 'PROMOÇÃO/ATUALIZANDO UMA PROMOÇÃO';
+      
+      
+      const postData = {  
+          IDFUNCIONARIO: String(usuarioLogado.id),
+          PATHFUNCAO:  textoFuncao,
+          DADOS: textDados,
+          IP: ipUsuario
+      }
+
+       await post('/log-web', postData)
       Swal.fire({
         position: 'center',
         icon: 'success',
@@ -1074,6 +1086,61 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao, modalVisivel, setModalVi
       return response.data;
     } catch (error) {
       console.error('Erro ao Atualizar promoção:', error);
+      const putDataLog = {
+        DSPROMOCAOMARKETING: descricao.toUpperCase(),
+        DTHORAINICIO: dataInicio,
+        DTHORAFIM: dataFim + ' 23:59:59',
+        TPAPLICADOA: dadosPromocao[0]?.TPAPLICADOA,
+        APARTIRDEQTD: Number(qtdInicio),
+        APARTIRDOVLR: valorInicio,
+        TPFATORPROMO: dadosPromocao[0]?.TPFATORPROMO,
+        FATORPROMOVLR: Number(vrDesconto),
+        FATORPROMOPERC: Number(porcentoDesconto),
+        TPAPARTIRDE: dadosPromocao[0]?.TPAPARTIRDE,
+        VLPRECOPRODUTO: Number(precoProduto),
+        STEMPRESAPROMO: "True",
+        STDETPROMOORIGEM: "True",
+        STDETPROMODESTINO: "True",
+        IDMECANICARESUMOPROMOCAOMARKETING: dadosPromocao[0]?.IDMECANICARESUMOPROMOCAOMARKETING,
+        STATIVO: statusSelecionado,
+        IDRESUMOPROMOCAOMARKETING: dadosPromocao[0]?.IDRESUMOPROMOCAOMARKETING,
+        IDEMPRESA: empresasSelecionadasValues,
+        IDGRUPOEMDESTINO: grupoSelecionado,
+        IDSUBGRUPOEMDESTINO: subGrupoSelecionado,
+        IDMARCAEMDESTINO: marcaDestino,
+        IDFORNECEDOREMDESTINO: fornecedorSelecionado,
+        IDGRUPOEMORIGEM: grupoSelecionado,
+        IDSUBGRUPOEMORIGEM: subGrupoSelecionado,
+        IDMARCAEMORIGEM: marcaOrigem,
+        IDFORNECEDOREMORIGEM: fornecedorSelecionado,
+        IDPRODUTO: Array.from(new Set([
+          ...extractIds(produtosDestino),
+          ...extractIds(produtoDestinoSelecionado),
+          ...extractIds(novoProdutoDestino),
+        ])),
+        IDPRODUTODESTINO: Array.from(new Set([
+          ...extractIds(produtosDestino),
+          ...extractIds(produtoDestinoSelecionado),
+          ...extractIds(novoProdutoDestino),
+        ])),
+        IDPRODUTOORIGEM: Array.from(new Set([
+          ...extractIds(produtosOrigem),
+          ...extractIds(produtoOrigemSelecionado),
+          ...extractIds(novoProdutoOrigem),
+        ].filter(Boolean))),
+      };
+      
+      const textDados = JSON.stringify(putDataLog)
+      let textoFuncao = 'PROMOÇÃO/ERRO AO ATUALIZAR UMA PROMOÇÃO';
+      const postData = {  
+          IDFUNCIONARIO: String(usuarioLogado.id),
+          PATHFUNCAO:  textoFuncao,
+          DADOS: textDados,
+          IP: ipUsuario
+      }
+
+      await post('/log-web', postData)
+      
       Swal.fire({
         position: 'top-end',
         icon: 'error',
