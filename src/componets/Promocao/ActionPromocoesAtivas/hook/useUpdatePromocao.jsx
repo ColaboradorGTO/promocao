@@ -65,7 +65,9 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao, modalVisivel, setModalVi
 
   useEffect(() => {
     const usuarioArmazenado = localStorage.getItem('usuario');
-
+    const usuarioArmazenadoLog = localStorage.getItem('user');
+    console.log(usuarioArmazenadoLog, "usuario log")
+    console.log(usuarioArmazenado, "usuario log")
     if (usuarioArmazenado) {
       try {
         const parsedUsuario = JSON.parse(usuarioArmazenado);
@@ -735,7 +737,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao, modalVisivel, setModalVi
     [empresasSelecionadas]
   );
   
-  console.log(usuarioLogado, "usuario logado no sistema")
+  
   const onSubmit = async (data) => {
     
     try {
