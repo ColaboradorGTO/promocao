@@ -83,14 +83,27 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao, modalVisivel, setModalVi
 
   }, [usuarioLogado]);
 
-  const getIPUsuario = async () => {
-    const response = await axios.get('http://ipwho.is/');
-    if (response.data) {
-      setIpUsuario(response.data.ip);
-    }
-    return response.data;
-  };
+  // const getIPUsuario = async () => {
+  //   const response = await axios.get('http://ipwho.is/');
+  //   if (response.data) {
+  //     setIpUsuario(response.data.ip);
+  //   }
+  //   return response.data;
+  // };
 
+    const getIPUsuario = async () => {
+    try {
+      const response = await axios.get('https://api64.ipify.org?format=json');
+      if (response.data && response.data.ip) {
+        setIpUsuario(response.data.ip);
+      }
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao obter o IP do usuário:', error);
+      return null;
+    }
+  }
+  
   useEffect(() => {
     const dataInicial = getDataTresMesesAtras()
     const dataFinal = getDataAtual()
@@ -1140,7 +1153,7 @@ export const useUpdatePromocaoAtiva = ({ dadosPromocao, modalVisivel, setModalVi
       }
 
       await post('/log-web', postData)
-      
+
       Swal.fire({
         position: 'top-end',
         icon: 'error',
