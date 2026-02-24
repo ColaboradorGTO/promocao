@@ -8,7 +8,7 @@ import * as XLSX from 'xlsx';
 import HeaderTable from "../../../Tables/headerTable";
 import { IoMdClose } from "react-icons/io";
 import { ButtonTable } from "../../../ButtonsTabela/ButtonTable";
-import { get } from "../../../../api/funcRequest";
+import { post } from "../../../../api/funcRequest";
 
 
 export const ActionListaProdutosSelecionadoDestino = ({ 
@@ -20,6 +20,7 @@ export const ActionListaProdutosSelecionadoDestino = ({
   setFileProdutoDestino
 }) => {
   const [globalFilterValue, setGlobalFilterValue] = useState('');
+  const [idsParaBuscar, setIdsParaBuscar] = useState([]);
   const dataTableRef = useRef();
 
   const onGlobalFilterChange = (e) => {
@@ -60,41 +61,102 @@ export const ActionListaProdutosSelecionadoDestino = ({
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Produtos Promoções Ativas');
     XLSX.writeFile(workbook, 'produtos_promocoes.xlsx');
   };
+  
+   useEffect(() => {
+    if (
+      Array.isArray(produtoDestinoSelecionado) &&
+      produtoDestinoSelecionado.length > 0 &&
+      typeof produtoDestinoSelecionado[0] !== "object"
+    ) {
+      setIdsParaBuscar(produtoDestinoSelecionado);
+    }
+  }, [produtoDestinoSelecionado]);
 
   useEffect(() => {
     const fetchProdutosCompletos = async () => {
-      if (
-        Array.isArray(produtoDestinoSelecionado) &&
-        produtoDestinoSelecionado.length > 0 &&
-        typeof produtoDestinoSelecionado[0] !== "object"
-      ) {
+      if (idsParaBuscar.length > 0) {
         try {
-          // Exemplo: /produto-promocao-ativa?idProduto=1,2,3
-          const ids = produtoDestinoSelecionado.join(',');
-          const response = await get(`/produto-promocao-ativa?idProduto=${ids}`);
-          if (response?.data) {
-            // Se a API retorna um array de produtos
-            setProdutoDestinoSelecionado(response.data);
+          const ids = idsParaBuscar.join(',');
+
+          // Primeira tentativa: solicitar todos de uma vez
+          let response = await post(`/criar-produto-promocao-ativa`, {
+            idProduto: ids,
+            pageSize: idsParaBuscar.length // Solicita todos os produtos de uma vez
+          });
+
+          let allData = [];
+
+          if (response?.data?.data) {
+            allData = [...response.data.data];
+
+            // Se há paginação e não obteve todos os dados, busca as páginas restantes
+            if (response.data.rows > allData.length) {
+              const totalPages = Math.ceil(response.data.rows / response.data.pageSize);
+
+              for (let page = 2; page <= totalPages; page++) {
+                const pageResponse = await post(`/criar-produto-promocao-ativa`, {
+                  idProduto: ids,
+                  page: page,
+                  pageSize: response.data.pageSize
+                });
+
+                if (pageResponse?.data?.data) {
+                  allData = [...allData, ...pageResponse.data.data];
+                }
+              }
+            }
+
+            setProdutoDestinoSelecionado(allData);
+
+            setIdsParaBuscar([]); // Limpa os IDs após buscar
           }
         } catch (error) {
           console.error('Erro ao buscar produtos:', error);
+          setIdsParaBuscar([]); // Limpa os IDs mesmo em caso de erro
         }
       }
     };
     fetchProdutosCompletos();
-  }, [produtoDestinoSelecionado, setProdutoDestinoSelecionado, fileProdutoDestino]);
+  }, [idsParaBuscar]);
 
-  const dados = produtoDestinoSelecionado.map((item, index) => {
-    let contador = index + 1;
-   
-    return {
-      contador,
+  // Transforma o array de IDs em objetos de produto, se necessário
+  let dados = [];
+
+  // Verifica se é um objeto com propriedade data (resposta da API)
+  if (produtoDestinoSelecionado && typeof produtoDestinoSelecionado === 'object' && produtoDestinoSelecionado.data) {
+    dados = produtoDestinoSelecionado.data.map((item, index) => ({
+      contador: index + 1,
       IDPRODUTO: item.IDPRODUTO,
       NUCODBARRAS: item.NUCODBARRAS,
       DSNOME: item.DSNOME,
-    }
-  });
+    }));
 
+  }
+  // Verifica se é um array direto
+  else if (
+    Array.isArray(produtoDestinoSelecionado) &&
+    produtoDestinoSelecionado.length > 0
+  ) {
+    if (typeof produtoDestinoSelecionado[0] === "object") {
+      // Já é array de objetos
+      dados = produtoDestinoSelecionado.map((item, index) => ({
+        contador: index + 1,
+        IDPRODUTO: item.IDPRODUTO,
+        NUCODBARRAS: item.NUCODBARRAS,
+        DSNOME: item.DSNOME,
+      }));
+    } else {
+      // É array de IDs, precisa buscar os dados completos dos produtos
+      dados = produtoDestinoSelecionado.map((id, index) => ({
+        contador: index + 1,
+        IDPRODUTO: id,
+        NUCODBARRAS: "", // Preencha conforme necessário
+        DSNOME: "",      // Preencha conforme necessário
+      }));
+    }
+  }
+  
+  
   const colunasProdutos = [
     {
       field: 'contador',
