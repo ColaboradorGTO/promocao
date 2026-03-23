@@ -1,4 +1,3 @@
-
 import { Fragment } from "react";
 import { HeadTitleComponent } from "../HeadTitle";
 import { ButtonType } from "../Buttons/ButtonType";
@@ -80,8 +79,12 @@ export const ActionMainPromocao = ({
   InputSelectAplicacaoDestino,
   InputSelectTipoDesconto,
   InputSelectEmpresaComponentAync,
+  InputSelectSubGrupoOrigemComponentAync,
+  InputSelectSubGrupoDestinoComponentAync,
   InputSelectStatus,
-
+  InputGrupoEstrutura,
+  InputProduto,
+  
 
   labelSelectCategoria,
   labelSelectMarcas,
@@ -91,8 +94,11 @@ export const ActionMainPromocao = ({
   labelSelectAplicacaoDestino,
   labelSelectTipoDesconto,
   labelSelectEmpresaAsync,
+  labelSelectSubGrupoOrigemAsync,
+  labelSelectSubGrupoDestinoAsync,
   labelSelectStatus,
-
+  labelInputGrupoEstrutura,
+  labelInputProduto,
   optionsCategorias,
   optionsMarcas,
   optionsFornecedores,
@@ -101,6 +107,8 @@ export const ActionMainPromocao = ({
   optionsAplicacaoDestino,
   optionsTipoDesconto,
   optionsEmpresasAsync,
+  optionsSubGrupoOrigemAsync,
+  optionsSubGrupoDestinoAsync,
   optionsStatus,
 
   valueSelectMarca,
@@ -110,8 +118,12 @@ export const ActionMainPromocao = ({
   valueSelectAplicacaoDestino,
   valueSelectTipoDesconto,
   valueSelectEmpresaAsync,
+  valueSelectSubGrupoOrigemAsync,
+  valueSelectSubGrupoDestinoAsync,
   valueSelectCategoria,
   valueSelectStatus,
+  valueInputGrupoEstrutura,
+  valueInputProduto,
 
   onChangeSelectCategoria,
   onChangeSelectMarcas,
@@ -121,7 +133,11 @@ export const ActionMainPromocao = ({
   onChangeSelectAplicacaoDestino,
   onChangeSelectTipoDesconto,
   onChangeSelectEmpresaAsync,
-  onChangeSelectStatus,
+  onChangeSelectSubGrupoOrigemAsync,
+  onChangeSelectSubGrupoDestinoAsync,
+  onChangeSelectStatus, 
+  onChangeInputGrupoEstrutura,
+  onChangeInputProduto,
 
   acceptFileProdutoOigem,
   acceptFileProdutoDestino,
@@ -137,6 +153,7 @@ export const ActionMainPromocao = ({
   ButtonTypeVisualizarProduto,
   ButtonTypeProdutoPesquisadoOrigem,
   ButtonTypeProdutoPesquisadoDestino,
+  ButtonTypeRetornar,
 
   linkNomeSearch,
   linkNome,
@@ -149,6 +166,7 @@ export const ActionMainPromocao = ({
   linkNomeVisualizarProduto,
   linkNomeProdutoPesquisadoOrigem,
   linkNomeProdutoPesquisadoDestino,
+  linkRetornar,
 
   onButtonClickSearch,
   onButtonClickCadastro,
@@ -161,6 +179,7 @@ export const ActionMainPromocao = ({
   onButtonClickVisualizarProduto,
   onButtonClickProdutoPesquisadoOrigem,
   onButtonClickProdutoPesquisadoDestino,
+  onButtonClickRetornar,
 
   corSearch,
   corCadastro,
@@ -173,6 +192,7 @@ export const ActionMainPromocao = ({
   corVisualizarProduto,
   corProdutoPesquisadoOrigem,
   corProdutoPesquisadoDestino,
+  corRetornar,
 
   IconSearch,
   IconCadastro,
@@ -185,6 +205,7 @@ export const ActionMainPromocao = ({
   IconVisualizarProduto,
   IconProdutoPesquisadoOrigem,
   IconProdutoPesquisadoDestino,
+  IconRetornar,
 
   readOnlyDTInicio,
   readOnlyDTFim,
@@ -210,8 +231,10 @@ export const ActionMainPromocao = ({
   readOnlySalvarMecanica,
   readOnlyEditarMecanica,
   readOnlyStatus,
-
-  loadOptionsEmpresasAsync,
+  readOnlyGrupoEstrutura,
+  readOnlyProduto,
+  readOnlyButtonProdutoPesquisadoDestino,
+  readOnlyVisualizarProduto,
 
   defaultValueSelectCategoria,
   defaultValueSelectMarca,
@@ -223,6 +246,22 @@ export const ActionMainPromocao = ({
   defaultOptionsEmpresasAsync,
   defaultValueSelectStatus,
 
+  MenuTreeSelectOrigemComponent,
+  valueTreeSelectOrigem,
+  onChangeTreeSelectOrigem,
+  optionsTreeSelectOrigem,
+  placeholderTreeSelectOrigem,
+  onNodeTreeSelectOrigem,
+  onNodeTreeUnselectOrigem,
+
+  MenuTreeSelectDestinoComponent,
+  valueTreeSelectDestino,
+  onChangeTreeSelectDestino,
+  optionsTreeSelectDestino,
+  placeholderTreeSelectDestino,
+  onNodeTreeSelectDestino,
+  onNodeTreeUnselectDestino,
+
   styleQTDInicio,
   styleQTDFim,
   styleDesconto1,
@@ -232,6 +271,10 @@ export const ActionMainPromocao = ({
   tituloPromocao,
   styleMecanica,
   styleDescription,
+  styleEstrutura,
+  styleProduto,
+  styleButtonSearch,
+  disabledBTBPedido
 }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -266,8 +309,8 @@ export const ActionMainPromocao = ({
                           defaultValue={defaultValueSelectMecanica}
                           styles={styleMecanica}
                           isDisabled={readOnlyMecanica}
+
                         />
-                        
 
                       )}
 
@@ -592,130 +635,254 @@ export const ActionMainPromocao = ({
                     </div>
                      
                   </div>
-
-
-                  <hr style={{ borderColor: 'black', width: '100%', height: '10px' }} />
-
-                  {/* INICIO PRODUTO ORIGEM */}
-                    <h2>Produto Origem</h2>
-                  <div className="row mt-3">
-
-                    <div className="col-sm-6 col-md-6 col-xl-6 ">
-                      {InputFieldProdutoOigem && (
-                        <InputFieldProdutoOigem
-                          label={labelInputFieldProdutoOigem}
-                          type="text"
-                          value={valueInputFieldProdutoOigem}
-                          onChange={onChangeInputFieldProdutoOigem}
-                          readOnly={readOnlyProdutoOigem}
-                        />
-                      )}
-
-                      {ButtonTypeProdutoPesquisadoOrigem && (
-                        <ButtonTypeProdutoPesquisadoOrigem
-                          textButton={linkNomeProdutoPesquisadoOrigem}
-                          onClickButtonType={onButtonClickProdutoPesquisadoOrigem}
-                          cor={corProdutoPesquisadoOrigem}
-                          tipo="button"
-                          Icon={IconProdutoPesquisadoOrigem}
-                          iconColor="#fff"
-                          iconSize={16}
-                        />
-
-                      )}
-
-                     
-                    </div>
-                    <div className="col-sm-6 col-md-6 col-xl-6">
-                      {InputFileProdutoOigem && (
-                        <InputFileProdutoOigem
-                          label={labelInputFileProdutoOigem}
-                          type="file"
-                          accpet={acceptFileProdutoOigem}
-                          value={valueInputFileProdutoOigem}
-                          onChange={onChangeInputFileProdutoOigem}
-                          readOnly={readOnlyFileProdutoOigem}
-                          disabled={readOnlyFileProdutoOigem}
-                        />
-                      )}
-
-                      {ButtonTypeCancelar && (
-                        <ButtonTypeCancelar
-                          textButton={linkCancelar}
-                          onClickButtonType={onButtonClickCancelar}
-                          cor={corCancelar}
-                          tipo="button"
-                          Icon={IconCancelar}
-                          iconColor="#fff"
-                          iconSize={16}
-                        />
-                      )}
-                    </div>
-
-                  </div>
-                  <hr style={{ borderColor: 'black', width: '100%', height: '10px' }} />
-
-                  {/* FIM PRODUTO ORIGEM */}
-
-                  {/* INICIO PRODUTO DESTINO  */}
-                  <h2>Produto Destino</h2>
-                  <div className="row mt-3">
-                    <div className="col-sm-6 col-md-6 col-xl-6 ">
-
-                      {InputFieldProdutoDestino && (
-                        <InputFieldProdutoDestino
-                          label={labelInputFieldProdutoDestino}
-                          type="text"
-                          value={valueInputFieldProdutoDestino}
-                          onChange={onChangeInputFieldProdutoDestino}
-                          readOnly={readOnlyProdutoDestino}
-                        />
-                      )}
-
-                       {ButtonTypeProdutoPesquisadoDestino && (
-                        <ButtonTypeProdutoPesquisadoDestino
-                          textButton={linkNomeProdutoPesquisadoDestino}
-                          onClickButtonType={onButtonClickProdutoPesquisadoDestino}
-                          cor={corProdutoPesquisadoDestino}
-                          tipo="button"
-                          Icon={IconProdutoPesquisadoDestino}
-                          iconColor="#fff"
-                          iconSize={16}
-                        />
-                      )}
+                    
+                  <div>
+                    <hr style={{ borderColor: 'black', width: '100%', height: '10px' }} />
 
                   
+                    <h2 style={{paddingLeft: '1rem'}} >Criar Promoção Por </h2>
+                    <div className="row">
+                        <div className="col-sm-6 col-md-4 col-xl-4">
+                          {InputProduto && (
+                            <InputProduto
+                              label={labelInputProduto}
+                              // type="radio"
+                              className="form-check-input"
+                              checked={valueInputProduto}
+                              onChange={onChangeInputProduto}
+                              readOnly={readOnlyProduto}
+                            
+                            />
+                          )}
+
+                        </div>
+                        
+                        <div className="col-sm-6 col-md-4 col-xl-4">
+
+                          {InputGrupoEstrutura && (
+                            <InputGrupoEstrutura 
+                              label={labelInputGrupoEstrutura}
+                              type="checkbox"
+                              className="form-check-input"
+                              checked={valueInputGrupoEstrutura}
+                              onChange={onChangeInputGrupoEstrutura}
+                              readOnly={readOnlyGrupoEstrutura}
+                            
+                            />
+                          )}
+
+                        </div>
+                        
                     </div>
-
-                    <div className="col-sm-6 col-md-6 col-xl-6 ">
-                      {InputFileProdutoDestino && (
-                        <InputFileProdutoDestino
-                          label={labelInputFileProdutoDestino}
-                          type="file"
-                          accpet={acceptFileProdutoDestino}
-                          value={valueInputFileProdutoDestino}
-                          onChange={onChangeInputFileProdutoDestino}
-                          readOnly={readOnlyFileProdutoDestino}
-                          disabled={readOnlyFileProdutoDestino}
-                        />
-                      )}
-
-                      {ButtonTypeCadastro && (
-                        <ButtonTypeCadastro
-                          textButton={linkNome}
-                          onClickButtonType={onButtonClickCadastro}
-                          cor={corCadastro}
-                          tipo="button"
-                          Icon={IconCadastro}
-                          iconColor="#fff"
-                          iconSize={16}
-                        />
-                      )} 
-                      
-                    </div>
-
                   </div>
-                  {/* FIM PRODUTO DESTINO */}
+                  <div style={styleEstrutura}>
+
+                    <hr style={{ borderColor: 'black', width: '100%', height: '10px' }} />
+
+                    <h2 style={{paddingLeft: '1rem'}} >Promoção Por Estrutura Mercadológica</h2>
+                    
+                    <div className="row mt-3 "  >
+
+                      <div className="col-sm-6 col-md-6 col-xl-6">
+                          {/* {InputSelectSubGrupoOrigemComponentAync && (
+                            <InputSelectSubGrupoOrigemComponentAync
+                            label={labelSelectSubGrupoOrigemAsync}
+                            // defaultValue={defaultOptionsSubGrupoAsync}
+                            value={valueSelectSubGrupoOrigemAsync}
+                            optionsMultSelect={optionsSubGrupoOrigemAsync}
+                            onChange={onChangeSelectSubGrupoOrigemAsync}
+                    
+                            isMulti={true}
+                            />
+                          )} */}
+                        {MenuTreeSelectOrigemComponent && (
+                          <MenuTreeSelectOrigemComponent
+                            valueMenuSelect={valueTreeSelectOrigem}
+                            onChangeMenuSelect={onChangeTreeSelectOrigem}
+                            optionsMenuSelect={optionsTreeSelectOrigem}
+                            placeholderMenuSelect={placeholderTreeSelectOrigem}
+                            onNodeMenuSelect={onNodeTreeSelectOrigem}
+                            onNodeMenuUnselect={onNodeTreeUnselectOrigem}
+                            label={labelSelectSubGrupoOrigemAsync}
+                          />
+                        )}
+
+                      </div>
+
+                      <div className="col-sm-6 col-md-6 col-xl-6">
+                          {/* {InputSelectSubGrupoDestinoComponentAync && (
+                            <InputSelectSubGrupoDestinoComponentAync
+                            label={labelSelectSubGrupoDestinoAsync}
+                            // defaultValue={defaultOptionsSubGrupoAsync}
+                            value={valueSelectSubGrupoDestinoAsync}
+                            optionsMultSelect={optionsSubGrupoDestinoAsync}
+                            onChange={onChangeSelectSubGrupoDestinoAsync}
+                    
+                            isMulti={true}
+                            />
+                          )} */}
+                          
+                          {/* <p htmlFor="">Sub Grupo Destino</p> */}
+                        {MenuTreeSelectDestinoComponent && (
+                          <MenuTreeSelectDestinoComponent
+                            valueMenuSelect={valueTreeSelectDestino}
+                            onChangeMenuSelect={onChangeTreeSelectDestino}
+                            optionsMenuSelect={optionsTreeSelectDestino}
+                            placeholderMenuSelect={placeholderTreeSelectDestino}
+                            onNodeMenuSelect={onNodeTreeSelectDestino}
+                            onNodeMenuUnselect={onNodeTreeUnselectDestino}
+                            label={labelSelectSubGrupoDestinoAsync}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={styleProduto}>
+
+                    <hr style={{ borderColor: 'black', width: '100%', height: '10px' }} />
+
+                    {/* INICIO PRODUTO ORIGEM */}
+                      <h2>Produto Origem</h2>
+                    <div className="row mt-3">
+
+                      <div className="col-sm-6 col-md-6 col-xl-6 ">
+                        {InputFieldProdutoOigem && (
+                          <InputFieldProdutoOigem
+                            label={labelInputFieldProdutoOigem}
+                            type="text"
+                            value={valueInputFieldProdutoOigem}
+                            onChange={onChangeInputFieldProdutoOigem}
+                            readOnly={readOnlyProdutoOigem}
+                          />
+                        )}
+
+                        {ButtonTypeProdutoPesquisadoOrigem && (
+                          <ButtonTypeProdutoPesquisadoOrigem
+                            textButton={linkNomeProdutoPesquisadoOrigem}
+                            onClickButtonType={onButtonClickProdutoPesquisadoOrigem}
+                            cor={corProdutoPesquisadoOrigem}
+                            tipo="button"
+                            Icon={IconProdutoPesquisadoOrigem}
+                            iconColor="#fff"
+                            iconSize={16}
+                          />
+
+                        )}
+
+                      
+                      </div>
+                      <div className="col-sm-6 col-md-6 col-xl-6">
+                        {InputFileProdutoOigem && (
+                          <InputFileProdutoOigem
+                            label={labelInputFileProdutoOigem}
+                            type="file"
+                            accpet={acceptFileProdutoOigem}
+                            value={valueInputFileProdutoOigem}
+                            onChange={onChangeInputFileProdutoOigem}
+                            readOnly={readOnlyFileProdutoOigem}
+                            disabled={readOnlyFileProdutoOigem}
+                          />
+                        )}
+
+                        {ButtonTypeCancelar && (
+                          <ButtonTypeCancelar
+                            textButton={linkCancelar}
+                            onClickButtonType={onButtonClickCancelar}
+                            cor={corCancelar}
+                            tipo="button"
+                            Icon={IconCancelar}
+                            iconColor="#fff"
+                            iconSize={16}
+                          />
+                        )}
+                      </div>
+
+                    </div>
+                    <hr style={{ borderColor: 'black', width: '100%', height: '10px' }} />
+
+                    {/* FIM PRODUTO ORIGEM */}
+
+                    {/* INICIO PRODUTO DESTINO  */}
+                    <h2>Produto Destino</h2>
+                    <div className="row mt-3">
+                      <div className="col-sm-6 col-md-6 col-xl-6 ">
+
+                        {InputFieldProdutoDestino && (
+                          <InputFieldProdutoDestino
+                            label={labelInputFieldProdutoDestino}
+                            type="text"
+                            value={valueInputFieldProdutoDestino}
+                            onChange={onChangeInputFieldProdutoDestino}
+                            readOnly={readOnlyProdutoDestino}
+                          />
+                        )}
+
+                        {ButtonTypeProdutoPesquisadoDestino && (
+                          <ButtonTypeProdutoPesquisadoDestino
+                            textButton={linkNomeProdutoPesquisadoDestino}
+                            onClickButtonType={onButtonClickProdutoPesquisadoDestino}
+                            cor={corProdutoPesquisadoDestino}
+                            tipo="button"
+                            Icon={IconProdutoPesquisadoDestino}
+                            iconColor="#fff"
+                            iconSize={16}
+                            disabledBTN={readOnlyButtonProdutoPesquisadoDestino}
+                          />
+                        )}
+
+                    
+                      </div>
+
+                      <div className="col-sm-6 col-md-6 col-xl-6 ">
+                        {InputFileProdutoDestino && (
+                          <InputFileProdutoDestino
+                            label={labelInputFileProdutoDestino}
+                            type="file"
+                            accpet={acceptFileProdutoDestino}
+                            value={valueInputFileProdutoDestino}
+                            onChange={onChangeInputFileProdutoDestino}
+                            readOnly={readOnlyFileProdutoDestino}
+                            disabled={readOnlyFileProdutoDestino}
+                          />
+                        )}
+
+                        {ButtonTypeCadastro && (
+                          <ButtonTypeCadastro
+                            textButton={linkNome}
+                            onClickButtonType={onButtonClickCadastro}
+                            cor={corCadastro}
+                            tipo="button"
+                            Icon={IconCadastro}
+                            iconColor="#fff"
+                            iconSize={16}
+                          />
+                        )} 
+                        
+                      </div>
+
+                    </div>
+                    {/* FIM PRODUTO DESTINO */}
+                  </div>
+
+                  <hr style={{ borderColor: 'black', width: '100%', height: '10px' }} />
+
+                  <div className="row mt-3">
+                    {ButtonTypeVisualizarProduto && (
+                      <ButtonTypeVisualizarProduto
+                        textButton={linkNomeVisualizarProduto}
+                        onClickButtonType={onButtonClickVisualizarProduto}
+                        cor={corVisualizarProduto}
+                        tipo="button"
+                        Icon={IconVisualizarProduto}
+                        iconColor="#fff"
+                        iconSize={25}
+                        disabledBTN={readOnlyVisualizarProduto}
+                      />
+                    )}
+                  </div>
+
+{/* <hr style={{ borderColor: 'black', width: '100%', height: '10px' }} /> */}
 
                   <div className="row" style={{ marginTop: '3rem' }}>
 
@@ -728,20 +895,11 @@ export const ActionMainPromocao = ({
                         Icon={IconSearch}
                         iconColor="#fff"
                         iconSize={25}
+                        disabledBTN={styleButtonSearch}
                       />
                     )}
 
-                    {ButtonTypeVisualizarProduto && (
-                      <ButtonTypeVisualizarProduto
-                        textButton={linkNomeVisualizarProduto}
-                        onClickButtonType={onButtonClickVisualizarProduto}
-                        cor={corVisualizarProduto}
-                        tipo="button"
-                        Icon={IconVisualizarProduto}
-                        iconColor="#fff"
-                        iconSize={25}
-                      />
-                    )}
+                    
 
                     {ButtonTypePedido && (
                       <ButtonTypePedido
@@ -753,6 +911,7 @@ export const ActionMainPromocao = ({
                         Icon={IconPedido}
                         iconColor="#fff"
                         iconSize={25}
+                        disabledBTN={disabledBTBPedido}
                       />
                     )}
                     {ButtonTypeTXT && (
@@ -763,6 +922,20 @@ export const ActionMainPromocao = ({
                         cor={corTXT}
                         tipo="button"
                         Icon={IconTXT}
+                        iconColor="#000"
+                        iconSize={25}
+                        style={{ color: 'white' }}
+                      />
+                    )}
+
+                    {ButtonTypeRetornar && (
+                      <ButtonTypeRetornar
+                        textButton={linkRetornar}
+                        onClickButtonType={onButtonClickRetornar}
+                        // cor="danger"
+                        cor={corRetornar}
+                        tipo="button"
+                        Icon={IconRetornar}
                         iconColor="#000"
                         iconSize={25}
                         style={{ color: 'white' }}
